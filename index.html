@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Baby Shower de Sara</title>
+    
+    <meta property="og:title" content="💌 Invitación: Baby Shower de Sara">
+    <meta property="og:description" content="¡Sorpresa! Toca aquí para abrir tu invitación y ver los detalles.">
+    <meta property="og:image" content="preview.jpg">
+    <meta property="og:type" content="website">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Pacifico&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <style>
+        /* --- VARIABLES DE TEMA (NIÑA) --- */
+        :root {
+            --primary: #ff9a9e;
+            --secondary: #fecfef;
+            --accent: #ff6b81;
+            --text-dark: #4a4a4a;
+            --text-light: #7a7a7a;
+            --white: #ffffff;
+            --shadow: rgba(255, 154, 158, 0.4);
+        }
+
+        /* --- RESET & BASE --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f9f9f9;
+            height: 100dvh; /* Dynamic Viewport Height para móviles */
+            overflow: hidden; /* Evita scroll durante la animación */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- ESCENARIO PRINCIPAL --- */
+        #stage {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 480px; /* Ancho máximo tipo app móvil */
+            background: var(--white);
+            box-shadow: 0 0 50px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* --- CAPA 1: EL SOBRE (COVER) --- */
+        #cover {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 20;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .cover-content h1 {
+            font-family: 'Pacifico', cursive;
+            color: var(--white);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-open {
+            background: var(--white);
+            color: var(--accent);
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            transition: transform 0.2s;
+            margin-top: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn-open:active { transform: scale(0.95); }
+
+        /* --- CAPA 2: LA TARJETA (CONTENIDO) --- */
+        #card {
+            position: relative;
+            width: 100%; height: 100%;
+            z-index: 10;
+            background: #fffafa; /* Blanco nieve */
+            display: flex;
+            flex-direction: column;
+            opacity: 0; /* Oculto inicialmente */
+            overflow-y: auto; /* Permite scroll si el contenido es largo */
+        }
+
+        /* Decoración superior */
+        .card-header {
+            height: 180px;
+            background: url('https://images.unsplash.com/photo-1555252333-9f8e92e65df9?q=80&w=800&auto=format&fit=crop') center/cover;
+            border-radius: 0 0 30px 30px;
+            position: relative;
+            margin-bottom: 3rem;
+        }
+        
+        .photo-circle {
+            width: 120px; height: 120px;
+            background: white;
+            border: 4px solid var(--white);
+            border-radius: 50%;
+            position: absolute;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+        }
+        
+        /* Si tienes foto, descomenta el tag img y borra el emoji */
+        /* .photo-circle img { width: 100%; height: 100%; object-fit: cover; } */
+
+        .content {
+            padding: 0 2rem 2rem 2rem;
+            text-align: center;
+        }
+
+        .title {
+            font-family: 'Pacifico', cursive;
+            color: var(--accent);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        /* DATOS CLAVE */
+        .info-grid {
+            display: grid;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: left;
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border: 1px solid #ffecec;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .icon-box {
+            background: var(--secondary);
+            color: var(--accent);
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .info-text h3 { font-size: 0.9rem; color: var(--text-light); margin-bottom: 2px; }
+        .info-text p { font-size: 1rem; color: var(--text-dark); font-weight: 700; line-height: 1.3; }
+
+        /* REGALO (Lluvia de sobres) */
+        .gift-section {
+            background: #f8fcfd;
+            border: 2px dashed #bce0fd;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+        .gift-section p { font-size: 0.9rem; color: #555; }
+
+        /* BOTONES DE ACCIÓN */
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-bottom: 40px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            text-align: center;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+            transition: transform 0.2s;
+        }
+        .btn:active { transform: scale(0.98); }
+
+        .btn-map {
+            background: #fff;
+            color: var(--text-dark);
+            border: 2px solid #eee;
+        }
+
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+        }
+
+        /* Utilidad para elementos flotantes decorativos */
+        .floater { position: absolute; opacity: 0.2; pointer-events: none; }
+    </style>
+</head>
+<body>
+
+    <div id="stage">
+        
+        <div id="cover">
+            <div style="font-size: 100px; position:absolute; top:-20px; right:-20px; opacity:0.1;">🍼</div>
+            <div style="font-size: 80px; position:absolute; bottom:20px; left:-20px; opacity:0.1;">🧸</div>
+
+            <div class="cover-content">
+                <h1>Sorpresa!</h1>
+                <p style="color: white; font-size: 1.1rem; opacity: 0.9;">Tienes una Gran invitación</p>
+                <button class="btn-open" id="btnOpen">ABRIR AHORA</button>
+            </div>
+        </div>
+
+        <div id="card">
+            <div class="card-header">
+                <div class="photo-circle">
+                    👶 </div>
+            </div>
+
+            <div class="content">
+                <h2 class="title">Baby Shower de Sara</h2>
+                <p class="subtitle">Acompáñanos a celebrar la llegada de nuestra princesa</p>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="icon-box">📅</div>
+                        <div class="info-text">
+                            <h3>Cuándo</h3>
+                            <p>Domingo, 15 de Marzo 2026</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="icon-box">⏰</div>
+                        <div class="info-text">
+                            <h3>Hora</h3>
+                            <p>4:00 PM</p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="icon-box">📍</div>
+                        <div class="info-text">
+                            <h3>Dónde</h3>
+                            <p>Edificio Liseth<br><span style="font-weight:400; font-size:0.9rem;">Calle 117 #20-24, Provenza</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gift-section">
+                    <span style="font-size: 1.5rem;">✉️</span>
+                    <p><strong>Lluvia de Sobres</strong><br>Tu presencia es nuestro mejor regalo, pero si deseas tener un detalle, agradecemos tu aporte en sobre.</p>
+                </div>
+
+                <div class="actions">
+                    <a href="https://www.google.com/maps/search/?api=1&query=Edificio+Liseth+Calle+117+%2320-24+Provenza" target="_blank" class="btn btn-map">
+                        🗺️ Ver Ubicación en Mapa
+                    </a>
+
+                    <a href="https://wa.me/573023615388?text=Hola%2C%20confirmo%20mi%20asistencia%20al%20Baby%20Shower%20de%20Sara" class="btn btn-whatsapp">
+                        ✅ Confirmar Asistencia
+                    </a>
+                </div>
+                
+                <p style="font-size: 0.8rem; color: #ccc; margin-top: 20px;">Te esperamos con mucho amor</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- LÓGICA DE ANIMACIÓN PROFESIONAL ---
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            const btnOpen = document.getElementById('btnOpen');
+            const cover = document.getElementById('cover');
+            const card = document.getElementById('card');
+
+            // Crear Línea de Tiempo GSAP (Pausada)
+            const tl = gsap.timeline({ paused: true });
+
+            tl.to(btnOpen, { 
+                duration: 0.3, 
+                scale: 0, 
+                opacity: 0, 
+                ease: "back.in(1.7)" 
+            })
+            .to(cover, { 
+                duration: 1, 
+                yPercent: -100, // Deslizar hacia arriba
+                ease: "power4.inOut" 
+            })
+            .set(card, { opacity: 1 }) // Hacer visible el contenedor de la tarjeta
+            .from(".card-header", { 
+                duration: 0.8, 
+                y: 50, 
+                opacity: 0, 
+                ease: "power2.out" 
+            }, "-=0.5")
+            .from(".photo-circle", { 
+                duration: 0.6, 
+                scale: 0, 
+                rotation: -180, 
+                ease: "elastic.out(1, 0.5)" 
+            }, "-=0.3")
+            .from(".content > *", { // Animar hijos del contenido en cascada
+                duration: 0.6, 
+                y: 20, 
+                opacity: 0, 
+                stagger: 0.1, 
+                ease: "power2.out" 
+            }, "-=0.4");
+
+            // Trigger al hacer click
+            btnOpen.addEventListener('click', () => {
+                tl.play();
+            });
+
+        });
+    </script>
+</body>
+</html>
