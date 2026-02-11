@@ -118,7 +118,9 @@
             font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.5;
         }
         .copy-acc {
-            display: inline-block; margin-top: 5px; font-weight: 800; text-decoration: underline; cursor: pointer;
+            display: inline-block; margin-top: 8px; font-weight: 800; 
+            background: rgba(21, 101, 192, 0.1); padding: 5px 12px; 
+            border-radius: 8px; cursor: pointer; border: 1px dashed #1565c0;
         }
 
         .btn {
@@ -146,11 +148,11 @@
         <!-- Contenido de la Invitación -->
         <div id="card">
             <div class="card-header">
-                <div class="photo-circle" id="floatingEmoji">👶</div>
+                <div class="photo-circle" id="floatingEmoji">🧸</div>
             </div>
 
             <div class="content">
-                <h2 class="title">Baby Shower</h2>
+                <h2 class="title">¡Una bebé esta en camino!</h2>
                 <p class="subtitle">¡Acompáñanos a celebrar!</p>
 
                 <div class="timer-container" id="timer">
@@ -180,7 +182,7 @@
                 <div class="gift-box">
                     ✉️ <strong>Lluvia de Sobres:</strong><br>
                     Tu presencia es nuestro mejor regalo, pero si deseas tener un detalle:<br>
-                    <span class="copy-acc" onclick="copyAccount()">Cta Ahorros: 123-45678-90 (Copiar)</span>
+                    <span class="copy-acc" onclick="copyAccount()">Nequi: 3228853714 (Copiar)</span>
                 </div>
 
                 <div class="actions">
@@ -218,7 +220,6 @@
           .from(".card-header", { duration: 0.8, y: -50, opacity: 0, ease: "power2.out" })
           .from(".content > *", { duration: 0.5, y: 30, opacity: 0, stagger: 0.08, ease: "power2.out" }, "-=0.4")
           .add(() => {
-              // Animación infinita de flotado para el emoji
               gsap.to("#floatingEmoji", { y: 10, duration: 2, repeat: -1, yoyo: true, ease: "power1.inOut" });
           });
 
@@ -257,11 +258,21 @@
             }
         }, 1000);
 
-        // 5. COPIAR CUENTA
+        // 5. COPIAR CUENTA (ACTUALIZADO A NEQUI)
         function copyAccount() {
-            const acc = "123-45678-90";
-            navigator.clipboard.writeText(acc);
-            alert("Número de cuenta copiado: " + acc);
+            const acc = "3228853714";
+            navigator.clipboard.writeText(acc).then(() => {
+                alert("Número Nequi copiado: " + acc);
+            }).catch(err => {
+                // Fallback para navegadores antiguos
+                const input = document.createElement("input");
+                input.value = acc;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand("copy");
+                document.body.removeChild(input);
+                alert("Número Nequi copiado: " + acc);
+            });
         }
 
         // 6. AGREGAR AL CALENDARIO (.ICS)
