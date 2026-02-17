@@ -1,295 +1,274 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Invitación Baby Shower</title>
-    
-    <!-- Meta tags para redes sociales -->
-    <meta property="og:title" content="💌 Invitación a mi Baby Shower">
-    <meta property="og:description" content="¡Sorpresa! Toca aquí para abrir tu invitación.">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1616938959950-8b63e8093d97?q=80&w=800&auto=format&fit=crop"> 
-    <meta property="og:type" content="website">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Invitación Baby Shower</title>
 
-    <!-- Fonts y Librerías -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Pacifico&display=swap" rel="stylesheet">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Pacifico&display=swap" rel="stylesheet">
 
-    <style>
-        :root {
-            --primary: #ff9a9e;
-            --secondary: #fecfef;
-            --accent: #ff6b81;
-            --text-dark: #2d3436;
-            --text-light: #636e72;
-            --white: #ffffff;
-        }
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        body {
-            font-family: 'Nunito', sans-serif;
-            background-color: #f0f2f5;
-            height: 100dvh;
-            overflow: hidden;
-            display: flex; justify-content: center; align-items: center;
-        }
+<style>
+:root{
+ --accent:#ff6b81;
+ --text-dark:#2d3436;
+ --text-light:#636e72;
+}
 
-        #stage {
-            position: relative; width: 100%; height: 100%; max-width: 480px;
-            background: var(--white);
-            box-shadow: 0 0 50px rgba(0,0,0,0.15);
-            overflow: hidden;
-        }
+*{margin:0;padding:0;box-sizing:border-box;}
 
-        /* --- PORTADA --- */
-        #cover {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
-        }
-        .btn-open {
-            background: var(--white); color: var(--accent); border: none; padding: 1rem 3rem;
-            font-size: 1.1rem; border-radius: 50px; font-weight: 800; cursor: pointer;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2); margin-top: 2rem; 
-            transform-origin: center; transition: transform 0.1s;
-        }
+body{
+ font-family:'Nunito',sans-serif;
+ background:#f0f2f5;
+ height:100dvh;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ overflow:hidden;
+}
 
-        /* --- CONTENIDO DE LA CARTA --- */
-        #card {
-            position: relative; width: 100%; height: 100%; z-index: 10;
-            background-color: #ffffff;
-            background-image: radial-gradient(var(--secondary) 0.8px, transparent 0.8px);
-            background-size: 24px 24px;
-            display: flex; flex-direction: column; opacity: 0;
-            overflow-y: scroll; scroll-behavior: smooth;
-        }
-        
-        .card-header {
-            height: 180px;
-            background: url('https://images.unsplash.com/photo-1616938959950-8b63e8093d97?q=80&w=800&auto=format&fit=crop') center/cover;
-            border-radius: 0 0 40px 40px; position: relative; margin-bottom: 3.5rem; flex-shrink: 0;
-        }
-        .photo-circle {
-            width: 120px; height: 120px; background: white; border: 5px solid var(--white);
-            border-radius: 50%; position: absolute; bottom: -60px; left: 50%;
-            transform: translateX(-50%); box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            display: flex; justify-content: center; align-items: center; font-size: 3.5rem; z-index: 5;
-        }
+#stage{
+ position:relative;
+ width:100%;
+ height:100%;
+ max-width:480px;
+ background:#fff;
+ box-shadow:0 0 50px rgba(0,0,0,.15);
+ overflow:hidden;
+}
 
-        .content { padding: 0 1.5rem 3rem 1.5rem; text-align: center; }
-        .title { font-family: 'Pacifico', cursive; color: var(--accent); font-size: 2.1rem; margin-bottom: 0.2rem; }
-        .subtitle { color: var(--text-light); margin-bottom: 1.5rem; font-size: 0.95rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;}
+/* PORTADA CON IMAGEN */
+#cover{
+ position:absolute;
+ width:100%;
+ height:100%;
+ z-index:20;
+ background:
+ linear-gradient(rgba(0,0,0,.20),rgba(0,0,0,.20)),
+ url('https://i.imgur.com/8jakDQj.jpeg') center/cover no-repeat;
+ display:flex;
+ flex-direction:column;
+ justify-content:center;
+ align-items:center;
+ text-align:center;
+}
 
-        /* --- CRONÓMETRO --- */
-        .timer-container {
-            display: flex; justify-content: center; gap: 10px; margin-bottom: 2rem;
-        }
-        .time-box {
-            background: var(--white); padding: 10px; border-radius: 15px;
-            min-width: 65px; display: flex; flex-direction: column; align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid var(--secondary);
-        }
-        .time-val { font-size: 1.4rem; font-weight: 800; color: var(--accent); line-height: 1; }
-        .time-label { font-size: 0.65rem; color: var(--text-light); text-transform: uppercase; margin-top: 5px; }
+.btn-open{
+ background:white;
+ color:#333;
+ border:none;
+ padding:1rem 3rem;
+ font-size:1.1rem;
+ border-radius:50px;
+ font-weight:800;
+ margin-top:2rem;
+ box-shadow:0 10px 30px rgba(0,0,0,.3);
+}
 
-        /* --- INFORMACIÓN --- */
-        .info-grid {
-            background: rgba(255,255,255,0.8); backdrop-filter: blur(5px);
-            border: 1px solid #eee; border-radius: 20px;
-            padding: 1.5rem; margin-bottom: 1.5rem; text-align: left;
-        }
-        .info-item { display: flex; gap: 15px; margin-bottom: 1.5rem; }
-        .info-item:last-child { margin-bottom: 0; }
-        .icon-box {
-            background: #fff0f3; color: var(--accent); width: 45px; height: 45px;
-            border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;
-        }
-        .info-text h3 { font-size: 0.75rem; color: var(--text-light); text-transform: uppercase; font-weight: 800; }
-        .info-text p { font-size: 1rem; color: var(--text-dark); font-weight: 700; line-height: 1.4; }
+/* FONDO INTERNO */
+#card{
+ position:relative;
+ width:100%;
+ height:100%;
+ opacity:0;
+ overflow-y:scroll;
+ background:linear-gradient(#dff3ff,#ffffff);
+}
 
-        /* --- BOTONES Y REGALOS --- */
-        .gift-box { 
-            background: #e3f2fd; color: #1565c0; padding: 1rem; border-radius: 15px; 
-            font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.5;
-        }
-        .copy-acc {
-            display: inline-block; margin-top: 8px; font-weight: 800; 
-            background: rgba(21, 101, 192, 0.1); padding: 5px 12px; 
-            border-radius: 8px; cursor: pointer; border: 1px dashed #1565c0;
-        }
+.card-header{
+ height:180px;
+ background:url('https://images.unsplash.com/photo-1616938959950-8b63e8093d97?q=80&w=800&auto=format&fit=crop') center/cover;
+ border-radius:0 0 40px 40px;
+ margin-bottom:3.5rem;
+ position:relative;
+}
 
-        .btn {
-            width: 100%; padding: 1.1rem; border-radius: 15px; text-decoration: none;
-            font-weight: 800; display: flex; justify-content: center; align-items: center; gap: 10px;
-            transition: transform 0.2s; margin-bottom: 12px; border: none; cursor: pointer; font-size: 1rem;
-        }
-        .btn-map { background: #f8f9fa; color: var(--text-dark); border: 2px solid #e9ecef; }
-        .btn-cal { background: #3d3d3d; color: white; }
-        .btn-whatsapp { background: #25D366; color: white; box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3); }
-        
-        .footer-tag { color: #bbb; font-size: 0.8rem; margin-top: 10px; }
-    </style>
+.photo-circle{
+ width:120px;height:120px;
+ background:white;
+ border-radius:50%;
+ position:absolute;
+ bottom:-60px;
+ left:50%;
+ transform:translateX(-50%);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:3.5rem;
+}
+
+.content{padding:0 1.5rem 3rem;text-align:center;}
+
+.title{font-family:'Pacifico';color:var(--accent);font-size:2.1rem;}
+.subtitle{color:var(--text-light);margin-bottom:1.5rem;font-weight:700;}
+
+.timer-container{display:flex;justify-content:center;gap:10px;margin-bottom:2rem;}
+.time-box{background:white;padding:10px;border-radius:15px;min-width:65px;box-shadow:0 4px 10px rgba(0,0,0,.05);}
+.time-val{font-size:1.4rem;font-weight:800;color:var(--accent);}
+.time-label{font-size:.65rem;color:var(--text-light);}
+
+.info-grid{
+ background:rgba(255,255,255,.95);
+ border-radius:20px;
+ padding:1.5rem;
+ margin-bottom:1.5rem;
+ text-align:left;
+}
+
+/* REGALOS */
+.gift-box{
+ background:#e3f2fd;
+ color:#1565c0;
+ padding:1.2rem;
+ border-radius:18px;
+ font-size:.95rem;
+ line-height:1.6;
+ margin-bottom:1.5rem;
+}
+
+.copy-acc{
+ display:inline-block;
+ margin-top:8px;
+ font-weight:800;
+ background:rgba(21,101,192,.12);
+ padding:6px 14px;
+ border-radius:10px;
+ cursor:pointer;
+ border:1px dashed #1565c0;
+}
+
+/* BOTONES */
+.actions{
+ display:flex;
+ flex-direction:column;
+ gap:16px;
+ margin-top:18px;
+}
+
+.btn{
+ width:100%;
+ padding:14px 16px;
+ border-radius:18px;
+ font-weight:800;
+ border:none;
+ cursor:pointer;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ font-size:1rem;
+ text-decoration:none;
+}
+
+.btn-cal{background:linear-gradient(135deg,#3a3a3a,#1f1f1f);color:white;}
+.btn-map{background:white;color:#333;border:1px solid #e6e6e6;}
+.btn-whatsapp{background:linear-gradient(135deg,#25D366,#18b458);color:white;}
+
+.footer-tag{color:#bbb;font-size:.8rem;margin-top:10px;}
+</style>
 </head>
 <body>
 
-    <div id="stage">
-        <!-- Pantalla de inicio -->
-        <div id="cover">
-            <h1 style="font-family:'Pacifico'; color:white; font-size:2.8rem; margin-bottom:10px;">¡Sorpresa!</h1>
-            <p style="color:white; opacity:0.9;">Tienes una invitación especial</p>
-            <button class="btn-open" id="btnOpen">ABRIR AHORA</button>
-        </div>
+<div id="stage">
+<div id="cover">
+<h1 style="font-family:'Pacifico';color:white;font-size:2.8rem;">¡Sorpresa!</h1>
+<p style="color:white;opacity:.9;">Tienes una invitación especial</p>
+<button class="btn-open" id="btnOpen">ABRIR AHORA</button>
+</div>
 
-        <!-- Contenido de la Invitación -->
-        <div id="card">
-            <div class="card-header">
-                <div class="photo-circle" id="floatingEmoji">🧸</div>
-            </div>
+<div id="card">
+<div class="card-header">
+<div class="photo-circle">🧸</div>
+</div>
 
-            <div class="content">
-                <h2 class="title">¡Una bebé esta en camino!</h2>
-                <p class="subtitle">¡Acompáñanos a celebrar!</p>
+<div class="content">
+<h2 class="title">¡Una bebé está en camino!</h2>
+<p class="subtitle">¡Acompáñanos a celebrar!</p>
 
-                <div class="timer-container" id="timer">
-                    <div class="time-box"><span class="time-val" id="days">00</span><span class="time-label">Días</span></div>
-                    <div class="time-box"><span class="time-val" id="hours">00</span><span class="time-label">Horas</span></div>
-                    <div class="time-box"><span class="time-val" id="mins">00</span><span class="time-label">Min</span></div>
-                    <div class="time-box"><span class="time-val" id="secs">00</span><span class="time-label">Seg</span></div>
-                </div>
+<div class="timer-container" id="timer">
+<div class="time-box"><span id="days" class="time-val">00</span><span class="time-label">Días</span></div>
+<div class="time-box"><span id="hours" class="time-val">00</span><span class="time-label">Horas</span></div>
+<div class="time-box"><span id="mins" class="time-val">00</span><span class="time-label">Min</span></div>
+<div class="time-box"><span id="secs" class="time-val">00</span><span class="time-label">Seg</span></div>
+</div>
 
-                <div class="info-grid">
-                    <div class="info-item">
-                        <div class="icon-box">📍</div>
-                        <div class="info-text">
-                            <h3>Lugar</h3>
-                            <p>Edificio Liseth<br>Cl 117 #20-24, Provenza</p>
-                        </div>
-                    </div>
-                    <div class="info-item">
-                        <div class="icon-box">📅</div>
-                        <div class="info-text">
-                            <h3>Fecha y Hora</h3>
-                            <p>15 de Marzo, 2026<br>4:00 PM</p>
-                        </div>
-                    </div>
-                </div>
+<div class="info-grid">
+<p><strong>Lugar:</strong><br>Cra. 21b #11667<br>Bucaramanga, Santander</p><br>
+<p><strong>Fecha y Hora:</strong><br>4 de Abril, 2026<br>4:00 PM</p>
+</div>
 
-                <div class="gift-box">
-                    ✉️ <strong>Lluvia de Sobres:</strong><br>
-                    Tu presencia es nuestro mejor regalo, pero si deseas tener un detalle:<br>
-                    <span class="copy-acc" onclick="copyAccount()">Nequi: 3228853714</span>
-                </div>
+<div class="gift-box">
+🎁 <strong>Lluvia de Sobres:</strong><br>
+Tu presencia es nuestro mejor regalo, pero si deseas tener un detalle:<br><br>
+<span class="copy-acc" onclick="copyAccount()">Nequi: 3228853714</span>
 
-                <div class="actions">
-                    <button class="btn btn-cal" onclick="addToCalendar()">
-                        📅 Agendar en mi Calendario
-                    </button>
-                    
-                    <a href="https://www.google.com/maps/search/?api=1&query=Edificio+Liseth+Calle+117+%2320-24+Provenza" target="_blank" class="btn btn-map">
-                        🗺️ Ver Ubicación
-                    </a>
+<br><br>
+<strong>También puedes regalar:</strong><br>
+• Pañales etapa RN, P o M<br>
+• Ropita para bebé (0–6 meses)<br>
+• Productos de aseo para bebé
+</div>
 
-                    <a href="https://wa.me/573228853714?text=¡Hola!%20Confirmo%20mi%20asistencia%20al%20Baby%20Shower%20👶" class="btn btn-whatsapp">
-                        ✅ Confirmar Asistencia
-                    </a>
-                </div>
-                
-                <p class="footer-tag">Te esperamos con mucho amor</p>
-            </div>
-        </div>
-    </div>
+<div class="actions">
+<button class="btn btn-cal" onclick="toggleTheme()">🎨 Ver Temática</button>
 
-    <script>
-        // 1. CONFIGURACIÓN
-        const eventDate = new Date("March 15, 2026 16:00:00").getTime();
+<a href="https://www.google.com/maps/search/?api=1&query=Cra+21b+11667+Bucaramanga+Santander"
+target="_blank" class="btn btn-map">🗺️ Ver Ubicación</a>
 
-        // 2. ANIMACIÓN DE ENTRADA (GSAP)
-        const btnOpen = document.getElementById('btnOpen');
-        const tl = gsap.timeline({ paused: true });
+<a href="https://wa.me/573228853714?text=Confirmo%20mi%20asistencia%20al%20Baby%20Shower"
+target="_blank" class="btn btn-whatsapp">Confirmar Asistencia</a>
+</div>
 
-        tl.to(btnOpen, { duration: 0.2, scale: 0.8, ease: "power1.in" })
-          .to(btnOpen, { duration: 0.2, scale: 0, opacity: 0 })
-          .to("#cover", { duration: 0.8, yPercent: -100, ease: "power4.inOut" })
-          .set("#card", { opacity: 1 })
-          .add(() => { launchConfetti(); })
-          .from(".card-header", { duration: 0.8, y: -50, opacity: 0, ease: "power2.out" })
-          .from(".content > *", { duration: 0.5, y: 30, opacity: 0, stagger: 0.08, ease: "power2.out" }, "-=0.4")
-          .add(() => {
-              gsap.to("#floatingEmoji", { y: 10, duration: 2, repeat: -1, yoyo: true, ease: "power1.inOut" });
-          });
+<div id="themeBox" style="display:none;margin-top:15px;background:#fff0f3;padding:15px;border-radius:15px;">
+Si crees que será niño: lleva algo azul.<br><br>
+Si crees que será niña: lleva algo rosado.
+</div>
 
-        btnOpen.addEventListener('click', () => tl.play());
+<p class="footer-tag">Te esperamos con mucho amor</p>
+</div>
+</div>
+</div>
 
-        // 3. CONFETTI
-        function launchConfetti() {
-            const end = Date.now() + 2000;
-            const colors = ['#ff9a9e', '#fecfef', '#ffffff'];
+<script>
+const eventDate=new Date("April 4, 2026 16:00:00").getTime();
 
-            (function frame() {
-                confetti({ particleCount: 3, angle: 60, spread: 55, origin: { x: 0 }, colors: colors });
-                confetti({ particleCount: 3, angle: 120, spread: 55, origin: { x: 1 }, colors: colors });
-                if (Date.now() < end) requestAnimationFrame(frame);
-            }());
-        }
+const btnOpen=document.getElementById('btnOpen');
+const tl=gsap.timeline({paused:true});
 
-        // 4. CRONÓMETRO
-        const timerInterval = setInterval(function() {
-            const now = new Date().getTime();
-            const distance = eventDate - now;
+tl.to(btnOpen,{duration:.2,scale:.8})
+.to(btnOpen,{duration:.2,scale:0,opacity:0})
+.to("#cover",{duration:.8,yPercent:-100})
+.set("#card",{opacity:1})
+.add(()=>{confetti({particleCount:80,spread:70});});
 
-            const d = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const s = Math.floor((distance % (1000 * 60)) / 1000);
+btnOpen.addEventListener('click',()=>tl.play());
 
-            document.getElementById("days").innerText = d < 10 ? "0" + d : d;
-            document.getElementById("hours").innerText = h < 10 ? "0" + h : h;
-            document.getElementById("mins").innerText = m < 10 ? "0" + m : m;
-            document.getElementById("secs").innerText = s < 10 ? "0" + s : s;
+function copyAccount(){
+ navigator.clipboard.writeText("3228853714");
+ alert("Número copiado");
+}
 
-            if (distance < 0) {
-                clearInterval(timerInterval);
-                document.getElementById("timer").innerHTML = "<h3 style='color:var(--accent)'>¡Es hoy! Te esperamos</h3>";
-            }
-        }, 1000);
+function toggleTheme(){
+ const box=document.getElementById("themeBox");
+ box.style.display=box.style.display==="none"?"block":"none";
+}
 
-        // 5. COPIAR CUENTA (ACTUALIZADO A NEQUI)
-        function copyAccount() {
-            const acc = "3228853714";
-            navigator.clipboard.writeText(acc).then(() => {
-                alert("Número Nequi copiado: " + acc);
-            }).catch(err => {
-                // Fallback para navegadores antiguos
-                const input = document.createElement("input");
-                input.value = acc;
-                document.body.appendChild(input);
-                input.select();
-                document.execCommand("copy");
-                document.body.removeChild(input);
-                alert("Número Nequi copiado: " + acc);
-            });
-        }
+setInterval(function(){
+ const now=new Date().getTime();
+ const d=Math.floor((eventDate-now)/(1000*60*60*24));
+ const h=Math.floor((eventDate-now)%(1000*60*60*24)/(1000*60*60));
+ const m=Math.floor((eventDate-now)%(1000*60*60)/(1000*60));
+ const s=Math.floor((eventDate-now)%(1000*60)/1000);
 
-        // 6. AGREGAR AL CALENDARIO (.ICS)
-        function addToCalendar() {
-            const title = "Baby Shower";
-            const location = "Edificio Liseth, Calle 117 #20-24, Provenza";
-            const start = "20260315T160000";
-            const end = "20260315T200000";
+ days.innerText=d;
+ hours.innerText=h;
+ mins.innerText=m;
+ secs.innerText=s;
+},1000);
+</script>
 
-            const icsContent = `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nDTSTART:${start}\nDTEND:${end}\nSUMMARY:${title}\nLOCATION:${location}\nDESCRIPTION:Celebración de Baby Shower\nEND:VEVENT\nEND:VCALENDAR`;
-
-            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.setAttribute('download', 'BabyShower.ics');
-            link.click();
-        }
-    </script>
 </body>
 </html>
