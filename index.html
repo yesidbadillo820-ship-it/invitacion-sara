@@ -2,309 +2,146 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Invitación Baby Shower</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Pacifico&display=swap" rel="stylesheet">
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <style>
-:root{
- --accent:#ff6b81;
- --text-dark:#2d3436;
- --text-light:#636e72;
-}
+body{font-family:'Nunito';margin:0;background:#f0f2f5;}
+#stage{max-width:480px;margin:auto;background:#fff;min-height:100vh;}
+#cover{height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;color:white;
+background:linear-gradient(rgba(0,0,0,.6),rgba(0,0,0,.6)),url('https://i.imgur.com/8jakDQj.jpeg') center/cover;}
+.btn-open{padding:15px 30px;border:none;border-radius:30px;background:white;font-weight:bold;}
 
-*{margin:0;padding:0;box-sizing:border-box;}
-
-body{
- font-family:'Nunito',sans-serif;
- background:#f0f2f5;
- height:100dvh;
- display:flex;
- justify-content:center;
- align-items:center;
- overflow:hidden;
-}
-
-#stage{
- position:relative;
- width:100%;
- height:100%;
- max-width:480px;
- background:#fff;
- box-shadow:0 0 50px rgba(0,0,0,.15);
- overflow:hidden;
-}
-
-#cover{
- position:absolute;
- width:100%;
- height:100%;
- z-index:20;
- background:
- linear-gradient(rgba(0,0,0,.20),rgba(0,0,0,.20)),
- url('https://i.imgur.com/8jakDQj.jpeg') center/cover no-repeat;
- display:flex;
- flex-direction:column;
- justify-content:center;
- align-items:center;
- text-align:center;
-}
-
-.btn-open{
- background:white;
- color:#333;
- border:none;
- padding:1rem 3rem;
- font-size:1.1rem;
- border-radius:50px;
- font-weight:800;
- margin-top:2rem;
- box-shadow:0 10px 30px rgba(0,0,0,.3);
-}
-
-#card{
- position:relative;
- width:100%;
- height:100%;
- opacity:0;
- overflow-y:scroll;
- background:linear-gradient(#dff3ff,#ffffff);
-}
-
-#card::before{
- content:"";
- position:absolute;
- width:200%;
- height:200px;
- top:50px;
- background:
- radial-gradient(circle at 100px 80px,#fff 60px,transparent 61px),
- radial-gradient(circle at 300px 70px,#fff 50px,transparent 51px),
- radial-gradient(circle at 500px 90px,#fff 60px,transparent 61px);
- animation:clouds 80s linear infinite;
- opacity:.5;
- pointer-events:none;
-}
-
-#card::after{
- content:"";
- position:absolute;
- width:200%;
- height:200px;
- top:150px;
- background:
- radial-gradient(circle at 150px 80px,#fff 70px,transparent 71px),
- radial-gradient(circle at 400px 60px,#fff 60px,transparent 61px);
- animation:clouds 120s linear infinite reverse;
- opacity:.35;
- pointer-events:none;
-}
-
-@keyframes clouds{
- from{transform:translateX(0);}
- to{transform:translateX(-50%);}
-}
-
-.card-header{
- height:180px;
- background:url('https://images.unsplash.com/photo-1616938959950-8b63e8093d97?q=80&w=800&auto=format&fit=crop') center/cover;
- border-radius:0 0 40px 40px;
- margin-bottom:3.5rem;
- position:relative;
-}
-
-.photo-circle{
- width:120px;height:120px;
- background:white;
- border-radius:50%;
- position:absolute;
- bottom:-60px;
- left:50%;
- transform:translateX(-50%);
- display:flex;
- align-items:center;
- justify-content:center;
- font-size:3.5rem;
-}
-
-.content{padding:0 1.5rem 3rem;text-align:center;}
-
-.title{font-family:'Pacifico';color:var(--accent);font-size:2.1rem;}
-.subtitle{color:var(--text-light);margin-bottom:1.5rem;font-weight:700;}
-
-.timer-container{display:flex;justify-content:center;gap:10px;margin-bottom:2rem;}
-.time-box{background:white;padding:10px;border-radius:15px;min-width:65px;box-shadow:0 4px 10px rgba(0,0,0,.05);}
-.time-val{font-size:1.4rem;font-weight:800;color:var(--accent);}
-.time-label{font-size:.65rem;color:var(--text-light);}
-
-.info-grid{
- background:rgba(255,255,255,.95);
- border-radius:20px;
- padding:1.5rem;
- margin-bottom:1.5rem;
- text-align:left;
-}
-
-.gift-box{
- background:#e3f2fd;
- color:#1565c0;
- padding:1.2rem;
- border-radius:18px;
- font-size:.95rem;
- line-height:1.6;
- margin-bottom:1.5rem;
-}
-
-.copy-acc{
- display:inline-block;
- margin-top:8px;
- font-weight:800;
- background:rgba(21,101,192,.12);
- padding:6px 14px;
- border-radius:10px;
- cursor:pointer;
- border:1px dashed #1565c0;
-}
-
-.actions{
- display:flex;
- flex-direction:column;
- gap:16px;
- margin-top:18px;
-}
-
-.btn{
- width:100%;
- padding:14px 16px;
- border-radius:18px;
- font-weight:800;
- border:none;
- cursor:pointer;
- display:flex;
- justify-content:center;
- align-items:center;
- font-size:1rem;
- text-decoration:none;
-}
-
-.btn-cal{background:linear-gradient(135deg,#3a3a3a,#1f1f1f);color:white;}
-.btn-map{background:white;color:#333;border:1px solid #e6e6e6;}
-.btn-whatsapp{background:linear-gradient(135deg,#25D366,#18b458);color:white;}
-
-.footer-tag{color:#bbb;font-size:.8rem;margin-top:10px;}
+#card{display:none;padding:20px;background:linear-gradient(#dff3ff,#fff);}
+.btn{padding:12px;border-radius:12px;border:none;width:100%;margin-top:10px;font-weight:bold;}
+.btn-wsp{background:#25D366;color:white;}
+.team{display:flex;gap:10px;}
+input{width:100%;padding:10px;margin-top:5px;border-radius:10px;border:1px solid #ccc;}
 </style>
 </head>
+
 <body>
 
 <div id="stage">
+
 <div id="cover">
-<h1 style="font-family:'Pacifico';color:white;font-size:2.8rem;">¡Sorpresa!</h1>
-<p style="color:white;opacity:.9;">Tienes una invitación especial</p>
-<button class="btn-open" id="btnOpen">ABRIR AHORA</button>
+<h1>¡Sorpresa!</h1>
+<button class="btn-open" onclick="openCard()">ABRIR</button>
 </div>
 
 <div id="card">
-<div class="card-header">
-<div class="photo-circle">🧸</div>
+
+<h2>¡Una bebé está en camino!</h2>
+
+<p><strong>Lugar:</strong><br>
+KM 10 vía Matanza - Finca El Paraíso</p>
+
+<p><strong>Fecha:</strong><br>
+04 Abril 2026 - 3:00 PM</p>
+
+<hr>
+
+<h3>🎯 Elige tu equipo</h3>
+<p id="counter">Cargando...</p>
+
+<div class="team">
+<button class="btn" onclick="pick('niño')">💙 Niño</button>
+<button class="btn" onclick="pick('niña')">💗 Niña</button>
 </div>
 
-<div class="content">
-<h2 class="title">¡Una bebé está en camino!</h2>
-<p class="subtitle">¡Acompáñanos a celebrar!</p>
+<hr>
 
-<div class="timer-container" id="timer">
-<div class="time-box"><span id="days" class="time-val">00</span><span class="time-label">Días</span></div>
-<div class="time-box"><span id="hours" class="time-val">00</span><span class="time-label">Horas</span></div>
-<div class="time-box"><span id="mins" class="time-val">00</span><span class="time-label">Min</span></div>
-<div class="time-box"><span id="secs" class="time-val">00</span><span class="time-label">Seg</span></div>
-</div>
+<h3>Confirmar asistencia</h3>
 
-<div class="info-grid">
-  <p><strong>Lugar:</strong><br>
-  KM 10 vía Matanza (Capilla Baja)<br>
-  Finca El Paraíso</p>
-  
-  <br>
-  
-  <p><strong>Fecha y Hora:</strong><br>
-  04 de Abril, 2026<br>
-  3:00 PM</p>
-</div>
+<input id="nombre" placeholder="Tu nombre">
+<input id="personas" type="number" value="1">
 
-<div class="gift-box">
-🎁 <strong>Lluvia de Sobres:</strong><br>
-Tu presencia es nuestro mejor regalo, pero si deseas tener un detalle:<br><br>
-<span class="copy-acc" onclick="copyAccount()">Nequi: 3239261230</span>
+<button class="btn btn-wsp" onclick="confirmar()">Confirmar</button>
 
-<br><br>
-<strong>También puedes regalar:</strong><br>
-• Pañales etapa RN, P o M<br>
-• Ropita para bebé (0–6 meses)<br>
-• Productos de aseo para bebé
-</div>
+<ul id="lista"></ul>
 
-<div class="actions">
-<button class="btn btn-cal" onclick="toggleTheme()">🎨 Ver Temática</button>
-
-<a href="https://maps.app.goo.gl/drr3JZ5VjAsqiFBT6"
-target="_blank" class="btn btn-map">🗺️ Ver Ubicación</a>
-
-<a href="https://wa.me/573228853714?text=Confirmo%20mi%20asistencia%20al%20Baby%20Shower"
-target="_blank" class="btn btn-whatsapp">Confirmar Asistencia</a>
-</div>
-
-<div id="themeBox" style="display:none;margin-top:15px;background:#fff0f3;padding:15px;border-radius:15px;">
-Si crees que será niño: lleva algo azul.<br><br>
-Si crees que será niña: lleva algo rosado.
-</div>
-
-<p class="footer-tag">Te esperamos con mucho amor</p>
-</div>
 </div>
 </div>
 
 <script>
-const eventDate=new Date("April 4, 2026 16:00:00").getTime();
-
-const btnOpen=document.getElementById('btnOpen');
-const tl=gsap.timeline({paused:true});
-
-tl.to(btnOpen,{duration:.2,scale:.8})
-.to(btnOpen,{duration:.2,scale:0,opacity:0})
-.to("#cover",{duration:.8,yPercent:-100})
-.set("#card",{opacity:1})
-.add(()=>{confetti({particleCount:80,spread:70});});
-
-btnOpen.addEventListener('click',()=>tl.play());
-
-function copyAccount(){
- navigator.clipboard.writeText("3228853714");
- alert("Número copiado");
+function openCard(){
+ document.getElementById("cover").style.display="none";
+ document.getElementById("card").style.display="block";
+ confetti({particleCount:100,spread:80});
 }
+</script>
 
-function toggleTheme(){
- const box=document.getElementById("themeBox");
- box.style.display=box.style.display==="none"?"block":"none";
-}
+<!-- FIREBASE -->
+<script type="module">
 
-setInterval(function(){
- const now=new Date().getTime();
- const d=Math.floor((eventDate-now)/(1000*60*60*24));
- const h=Math.floor((eventDate-now)%(1000*60*60*24)/(1000*60*60));
- const m=Math.floor((eventDate-now)%(1000*60*60)/(1000*60));
- const s=Math.floor((eventDate-now)%(1000*60)/1000);
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getFirestore, doc, updateDoc, increment, onSnapshot,
+ collection, addDoc, serverTimestamp, query, orderBy }
+from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
- days.innerText=d;
- hours.innerText=h;
- mins.innerText=m;
- secs.innerText=s;
-},1000);
+const firebaseConfig = {
+ apiKey: "AIzaSyB-xnzySrU14zbdILl5Tq20XqGdMKagEtc",
+ authDomain: "baby-shower-6f8a2.firebaseapp.com",
+ projectId: "baby-shower-6f8a2",
+ storageBucket: "baby-shower-6f8a2.firebasestorage.app",
+ messagingSenderId: "75598200130",
+ appId: "1:75598200130:web:29816bcfbf5c5fecac1cdb"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+/* CONTADOR */
+const ref = doc(db,"invitacion","babyshower");
+
+onSnapshot(ref,(docSnap)=>{
+ const d=docSnap.data();
+ if(d){
+  document.getElementById("counter").innerText =
+   "💙 Niño: "+d.niño+" | 💗 Niña: "+d.niña;
+ }
+});
+
+window.pick = async function(team){
+ await updateDoc(ref,{ [team]: increment(1) });
+ confetti({particleCount:60,spread:70});
+};
+
+/* INVITADOS */
+const invitadosRef = collection(db,"invitados");
+
+window.confirmar = async function(){
+
+ const nombre=document.getElementById("nombre").value;
+ const personas=parseInt(document.getElementById("personas").value);
+
+ if(!nombre){ alert("Escribe tu nombre"); return; }
+
+ await addDoc(invitadosRef,{
+  nombre,
+  personas,
+  timestamp: serverTimestamp()
+ });
+
+ document.getElementById("nombre").value="";
+};
+
+/* LISTA */
+const q=query(invitadosRef,orderBy("timestamp","desc"));
+
+onSnapshot(q,(snapshot)=>{
+ let html="";
+ snapshot.forEach(doc=>{
+  const d=doc.data();
+  html+=`<li>${d.nombre} (${d.personas})</li>`;
+ });
+ document.getElementById("lista").innerHTML=html;
+});
+
 </script>
 
 </body>
