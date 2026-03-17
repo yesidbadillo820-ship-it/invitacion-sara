@@ -12,32 +12,31 @@
 
 <style>
 body{
- font-family:'Nunito',sans-serif;
  margin:0;
+ font-family:'Nunito',sans-serif;
  background:#f0f2f5;
  display:flex;
  justify-content:center;
  align-items:center;
- height:100vh;
- overflow:hidden;
+ min-height:100vh;
 }
 
 #stage{
  width:100%;
  max-width:480px;
- height:100%;
+ height:100vh;
  background:white;
  overflow:hidden;
  position:relative;
 }
 
-/* PORTADA DINÁMICA */
+/* PORTADA */
 #cover{
  position:absolute;
  width:100%;
  height:100%;
  background:
- linear-gradient(rgba(0,0,0,.2),rgba(0,0,0,.2)),
+ linear-gradient(rgba(0,0,0,.6),rgba(0,0,0,.6)),
  url('https://i.imgur.com/8jakDQj.jpeg') center/cover no-repeat;
  display:flex;
  flex-direction:column;
@@ -54,11 +53,14 @@ body{
 }
 
 .btn-open{
- padding:12px 30px;
+ background:white;
+ color:#333;
+ padding:14px 35px;
  border:none;
  border-radius:30px;
  font-weight:bold;
  cursor:pointer;
+ box-shadow:0 10px 30px rgba(0,0,0,.4);
 }
 
 /* CONTENIDO */
@@ -70,7 +72,6 @@ body{
  background:linear-gradient(#dff3ff,#fff);
 }
 
-/* ANIMACIONES SCROLL */
 .fade{
  opacity:0;
  transform:translateY(30px);
@@ -81,7 +82,6 @@ body{
  transform:translateY(0);
 }
 
-/* BOTONES PRO */
 .btn{
  display:block;
  width:100%;
@@ -91,22 +91,6 @@ body{
  border:none;
  font-weight:bold;
  cursor:pointer;
- position:relative;
- overflow:hidden;
-}
-
-.btn::after{
- content:"";
- position:absolute;
- top:0;
- left:-100%;
- width:100%;
- height:100%;
- background:linear-gradient(120deg,transparent,rgba(255,255,255,.6),transparent);
- transition:.5s;
-}
-.btn:hover::after{
- left:100%;
 }
 
 .btn-map{background:white;border:1px solid #ddd;}
@@ -120,11 +104,6 @@ body{
 .team button{
  flex:1;
 }
-
-/* PARALLAX */
-#card.move{
- transition:.2s;
-}
 </style>
 </head>
 
@@ -133,7 +112,8 @@ body{
 <div id="stage">
 
 <div id="cover">
-<h1>¡Sorpresa!</h1>
+<h1 style="font-size:2.8rem;">¡Sorpresa!</h1>
+<p>Tienes una invitación especial</p>
 <button class="btn-open" id="open">ABRIR</button>
 </div>
 
@@ -176,7 +156,7 @@ Confirmar asistencia
 
 <script>
 
-/* APERTURA */
+/* ABRIR */
 const tl=gsap.timeline({paused:true});
 tl.to("#cover",{yPercent:-100,duration:.8})
 .set("#card",{opacity:1})
@@ -184,7 +164,7 @@ tl.to("#cover",{yPercent:-100,duration:.8})
 
 document.getElementById("open").onclick=()=>tl.play();
 
-/* SCROLL ANIMATION */
+/* SCROLL */
 const items=document.querySelectorAll(".fade");
 window.addEventListener("scroll",()=>{
  items.forEach(el=>{
@@ -194,25 +174,11 @@ window.addEventListener("scroll",()=>{
  });
 });
 
-/* PARALLAX SUAVE */
-document.addEventListener("mousemove",(e)=>{
- const x=e.clientX/40;
- const y=e.clientY/40;
- document.getElementById("card").style.transform=`translate(${x}px,${y}px)`;
-});
-
 /* ELECCIÓN */
 function pick(team){
  document.getElementById("result").innerText="Elegiste: "+team;
  confetti({particleCount:60,spread:80});
 }
-
-/* CONFETTI FINAL */
-window.addEventListener("scroll",()=>{
- if(window.innerHeight + window.scrollY >= document.body.offsetHeight){
-  confetti({particleCount:120,spread:100});
- }
-});
 
 </script>
 
