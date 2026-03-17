@@ -2,309 +2,218 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Invitación Baby Shower</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Pacifico&display=swap" rel="stylesheet">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <style>
-:root{
- --accent:#ff6b81;
- --text-dark:#2d3436;
- --text-light:#636e72;
-}
-
-*{margin:0;padding:0;box-sizing:border-box;}
-
 body{
  font-family:'Nunito',sans-serif;
+ margin:0;
  background:#f0f2f5;
- height:100dvh;
  display:flex;
  justify-content:center;
  align-items:center;
+ height:100vh;
  overflow:hidden;
 }
 
 #stage{
- position:relative;
  width:100%;
- height:100%;
  max-width:480px;
- background:#fff;
- box-shadow:0 0 50px rgba(0,0,0,.15);
+ height:100%;
+ background:white;
  overflow:hidden;
+ position:relative;
 }
 
+/* PORTADA DINÁMICA */
 #cover{
  position:absolute;
  width:100%;
  height:100%;
- z-index:20;
  background:
- linear-gradient(rgba(0,0,0,.20),rgba(0,0,0,.20)),
+ linear-gradient(rgba(0,0,0,.2),rgba(0,0,0,.2)),
  url('https://i.imgur.com/8jakDQj.jpeg') center/cover no-repeat;
  display:flex;
  flex-direction:column;
  justify-content:center;
  align-items:center;
- text-align:center;
+ color:white;
+ animation:zoom 10s infinite alternate;
+ z-index:10;
+}
+
+@keyframes zoom{
+ from{background-size:100%;}
+ to{background-size:115%;}
 }
 
 .btn-open{
- background:white;
- color:#333;
+ padding:12px 30px;
  border:none;
- padding:1rem 3rem;
- font-size:1.1rem;
- border-radius:50px;
- font-weight:800;
- margin-top:2rem;
- box-shadow:0 10px 30px rgba(0,0,0,.3);
+ border-radius:30px;
+ font-weight:bold;
+ cursor:pointer;
 }
 
+/* CONTENIDO */
 #card{
+ opacity:0;
+ height:100%;
+ overflow-y:auto;
+ padding:20px;
+ background:linear-gradient(#dff3ff,#fff);
+}
+
+/* ANIMACIONES SCROLL */
+.fade{
+ opacity:0;
+ transform:translateY(30px);
+ transition:.6s;
+}
+.fade.show{
+ opacity:1;
+ transform:translateY(0);
+}
+
+/* BOTONES PRO */
+.btn{
+ display:block;
+ width:100%;
+ padding:14px;
+ margin-top:10px;
+ border-radius:15px;
+ border:none;
+ font-weight:bold;
+ cursor:pointer;
  position:relative;
+ overflow:hidden;
+}
+
+.btn::after{
+ content:"";
+ position:absolute;
+ top:0;
+ left:-100%;
  width:100%;
  height:100%;
- opacity:0;
- overflow-y:scroll;
- background:linear-gradient(#dff3ff,#ffffff);
+ background:linear-gradient(120deg,transparent,rgba(255,255,255,.6),transparent);
+ transition:.5s;
+}
+.btn:hover::after{
+ left:100%;
 }
 
-#card::before{
- content:"";
- position:absolute;
- width:200%;
- height:200px;
- top:50px;
- background:
- radial-gradient(circle at 100px 80px,#fff 60px,transparent 61px),
- radial-gradient(circle at 300px 70px,#fff 50px,transparent 51px),
- radial-gradient(circle at 500px 90px,#fff 60px,transparent 61px);
- animation:clouds 80s linear infinite;
- opacity:.5;
- pointer-events:none;
-}
+.btn-map{background:white;border:1px solid #ddd;}
+.btn-wsp{background:#25D366;color:white;}
 
-#card::after{
- content:"";
- position:absolute;
- width:200%;
- height:200px;
- top:150px;
- background:
- radial-gradient(circle at 150px 80px,#fff 70px,transparent 71px),
- radial-gradient(circle at 400px 60px,#fff 60px,transparent 61px);
- animation:clouds 120s linear infinite reverse;
- opacity:.35;
- pointer-events:none;
-}
-
-@keyframes clouds{
- from{transform:translateX(0);}
- to{transform:translateX(-50%);}
-}
-
-.card-header{
- height:180px;
- background:url('https://images.unsplash.com/photo-1616938959950-8b63e8093d97?q=80&w=800&auto=format&fit=crop') center/cover;
- border-radius:0 0 40px 40px;
- margin-bottom:3.5rem;
- position:relative;
-}
-
-.photo-circle{
- width:120px;height:120px;
- background:white;
- border-radius:50%;
- position:absolute;
- bottom:-60px;
- left:50%;
- transform:translateX(-50%);
+.team{
  display:flex;
- align-items:center;
- justify-content:center;
- font-size:3.5rem;
+ gap:10px;
+ margin-top:15px;
+}
+.team button{
+ flex:1;
 }
 
-.content{padding:0 1.5rem 3rem;text-align:center;}
-
-.title{font-family:'Pacifico';color:var(--accent);font-size:2.1rem;}
-.subtitle{color:var(--text-light);margin-bottom:1.5rem;font-weight:700;}
-
-.timer-container{display:flex;justify-content:center;gap:10px;margin-bottom:2rem;}
-.time-box{background:white;padding:10px;border-radius:15px;min-width:65px;box-shadow:0 4px 10px rgba(0,0,0,.05);}
-.time-val{font-size:1.4rem;font-weight:800;color:var(--accent);}
-.time-label{font-size:.65rem;color:var(--text-light);}
-
-.info-grid{
- background:rgba(255,255,255,.95);
- border-radius:20px;
- padding:1.5rem;
- margin-bottom:1.5rem;
- text-align:left;
+/* PARALLAX */
+#card.move{
+ transition:.2s;
 }
-
-.gift-box{
- background:#e3f2fd;
- color:#1565c0;
- padding:1.2rem;
- border-radius:18px;
- font-size:.95rem;
- line-height:1.6;
- margin-bottom:1.5rem;
-}
-
-.copy-acc{
- display:inline-block;
- margin-top:8px;
- font-weight:800;
- background:rgba(21,101,192,.12);
- padding:6px 14px;
- border-radius:10px;
- cursor:pointer;
- border:1px dashed #1565c0;
-}
-
-.actions{
- display:flex;
- flex-direction:column;
- gap:16px;
- margin-top:18px;
-}
-
-.btn{
- width:100%;
- padding:14px 16px;
- border-radius:18px;
- font-weight:800;
- border:none;
- cursor:pointer;
- display:flex;
- justify-content:center;
- align-items:center;
- font-size:1rem;
- text-decoration:none;
-}
-
-.btn-cal{background:linear-gradient(135deg,#3a3a3a,#1f1f1f);color:white;}
-.btn-map{background:white;color:#333;border:1px solid #e6e6e6;}
-.btn-whatsapp{background:linear-gradient(135deg,#25D366,#18b458);color:white;}
-
-.footer-tag{color:#bbb;font-size:.8rem;margin-top:10px;}
 </style>
 </head>
+
 <body>
 
 <div id="stage">
+
 <div id="cover">
-<h1 style="font-family:'Pacifico';color:white;font-size:2.8rem;">¡Sorpresa!</h1>
-<p style="color:white;opacity:.9;">Tienes una invitación especial</p>
-<button class="btn-open" id="btnOpen">ABRIR AHORA</button>
+<h1>¡Sorpresa!</h1>
+<button class="btn-open" id="open">ABRIR</button>
 </div>
 
 <div id="card">
-<div class="card-header">
-<div class="photo-circle">🧸</div>
+
+<h2 class="fade">¡Una bebé está en camino!</h2>
+
+<div class="fade">
+<p><strong>Lugar:</strong><br>
+KM 10 vía Matanza (Capilla Baja)<br>
+Finca El Paraíso</p>
+
+<p><strong>Fecha:</strong><br>
+04 Abril 2026 - 4:00 PM</p>
 </div>
 
-<div class="content">
-<h2 class="title">¡Una bebé está en camino!</h2>
-<p class="subtitle">¡Acompáñanos a celebrar!</p>
+<div class="fade">
+<h3>🎯 Elige tu equipo</h3>
 
-<div class="timer-container" id="timer">
-<div class="time-box"><span id="days" class="time-val">00</span><span class="time-label">Días</span></div>
-<div class="time-box"><span id="hours" class="time-val">00</span><span class="time-label">Horas</span></div>
-<div class="time-box"><span id="mins" class="time-val">00</span><span class="time-label">Min</span></div>
-<div class="time-box"><span id="secs" class="time-val">00</span><span class="time-label">Seg</span></div>
+<div class="team">
+<button class="btn" onclick="pick('NIÑO')">💙 Niño</button>
+<button class="btn" onclick="pick('NIÑA')">💗 Niña</button>
 </div>
 
-<div class="info-grid">
-  <p><strong>Lugar:</strong><br>
-  KM 10 vía Matanza (Capilla Baja)<br>
-  Finca El Paraíso</p>
-  
-  <br>
-  
-  <p><strong>Fecha y Hora:</strong><br>
-  04 de Abril, 2026<br>
-  3:00 PM</p>
+<p id="result"></p>
 </div>
 
-<div class="gift-box">
-🎁 <strong>Lluvia de Sobres:</strong><br>
-Tu presencia es nuestro mejor regalo, pero si deseas tener un detalle:<br><br>
-<span class="copy-acc" onclick="copyAccount()">Nequi: 3239261230</span>
+<div class="fade">
+<a href="https://maps.app.goo.gl/drr3JZ5VjAsqiFBT6" target="_blank" class="btn btn-map">
+Ver ubicación
+</a>
 
-<br><br>
-<strong>También puedes regalar:</strong><br>
-• Pañales etapa RN, P o M<br>
-• Ropita para bebé (0–6 meses)<br>
-• Productos de aseo para bebé
+<a href="https://wa.me/573228853714?text=Confirmo asistencia" target="_blank" class="btn btn-wsp">
+Confirmar asistencia
+</a>
 </div>
 
-<div class="actions">
-<button class="btn btn-cal" onclick="toggleTheme()">🎨 Ver Temática</button>
-
-<a href="https://maps.app.goo.gl/drr3JZ5VjAsqiFBT6"
-target="_blank" class="btn btn-map">🗺️ Ver Ubicación</a>
-
-<a href="https://wa.me/573228853714?text=Confirmo%20mi%20asistencia%20al%20Baby%20Shower"
-target="_blank" class="btn btn-whatsapp">Confirmar Asistencia</a>
-</div>
-
-<div id="themeBox" style="display:none;margin-top:15px;background:#fff0f3;padding:15px;border-radius:15px;">
-Si crees que será niño: lleva algo azul.<br><br>
-Si crees que será niña: lleva algo rosado.
-</div>
-
-<p class="footer-tag">Te esperamos con mucho amor</p>
-</div>
 </div>
 </div>
 
 <script>
-const eventDate=new Date("April 4, 2026 16:00:00").getTime();
 
-const btnOpen=document.getElementById('btnOpen');
+/* APERTURA */
 const tl=gsap.timeline({paused:true});
-
-tl.to(btnOpen,{duration:.2,scale:.8})
-.to(btnOpen,{duration:.2,scale:0,opacity:0})
-.to("#cover",{duration:.8,yPercent:-100})
+tl.to("#cover",{yPercent:-100,duration:.8})
 .set("#card",{opacity:1})
-.add(()=>{confetti({particleCount:80,spread:70});});
+.add(()=>confetti({particleCount:80,spread:70}));
 
-btnOpen.addEventListener('click',()=>tl.play());
+document.getElementById("open").onclick=()=>tl.play();
 
-function copyAccount(){
- navigator.clipboard.writeText("3228853714");
- alert("Número copiado");
+/* SCROLL ANIMATION */
+const items=document.querySelectorAll(".fade");
+window.addEventListener("scroll",()=>{
+ items.forEach(el=>{
+  if(el.getBoundingClientRect().top<window.innerHeight-50){
+   el.classList.add("show");
+  }
+ });
+});
+
+/* PARALLAX SUAVE */
+document.addEventListener("mousemove",(e)=>{
+ const x=e.clientX/40;
+ const y=e.clientY/40;
+ document.getElementById("card").style.transform=`translate(${x}px,${y}px)`;
+});
+
+/* ELECCIÓN */
+function pick(team){
+ document.getElementById("result").innerText="Elegiste: "+team;
+ confetti({particleCount:60,spread:80});
 }
 
-function toggleTheme(){
- const box=document.getElementById("themeBox");
- box.style.display=box.style.display==="none"?"block":"none";
-}
+/* CONFETTI FINAL */
+window.addEventListener("scroll",()=>{
+ if(window.innerHeight + window.scrollY >= document.body.offsetHeight){
+  confetti({particleCount:120,spread:100});
+ }
+});
 
-setInterval(function(){
- const now=new Date().getTime();
- const d=Math.floor((eventDate-now)/(1000*60*60*24));
- const h=Math.floor((eventDate-now)%(1000*60*60*24)/(1000*60*60));
- const m=Math.floor((eventDate-now)%(1000*60*60)/(1000*60));
- const s=Math.floor((eventDate-now)%(1000*60)/1000);
-
- days.innerText=d;
- hours.innerText=h;
- mins.innerText=m;
- secs.innerText=s;
-},1000);
 </script>
 
 </body>
