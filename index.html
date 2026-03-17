@@ -1,285 +1,310 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Baby Shower Mágico</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Invitación Baby Shower</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;500;700&family=Pacifico&display=swap" rel="stylesheet">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&family=Pacifico&display=swap" rel="stylesheet">
 
-    <style>
-        :root {
-            --primary: #a2d2ff;
-            --secondary: #ffafcc;
-            --accent: #ffc8dd;
-            --glass: rgba(255, 255, 255, 0.9);
-            --text: #576574;
-        }
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+<style>
+:root{
+ --accent:#ff6b81;
+ --text-dark:#2d3436;
+ --text-light:#636e72;
+}
 
-        body {
-            font-family: 'Quicksand', sans-serif;
-            background: #f0f2f5;
-            height: 100dvh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            color: var(--text);
-        }
+*{margin:0;padding:0;box-sizing:border-box;}
 
-        #stage {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            max-width: 480px;
-            background: white;
-            box-shadow: 0 20px 80px rgba(0,0,0,0.2);
-            overflow: hidden;
-        }
+body{
+ font-family:'Nunito',sans-serif;
+ background:#f0f2f5;
+ height:100dvh;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ overflow:hidden;
+}
 
-        /* --- PORTADA --- */
-        #cover {
-            position: absolute;
-            inset: 0;
-            z-index: 50;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
+#stage{
+ position:relative;
+ width:100%;
+ height:100%;
+ max-width:480px;
+ background:#fff;
+ box-shadow:0 0 50px rgba(0,0,0,.15);
+ overflow:hidden;
+}
 
-        .cover-circle {
-            width: 260px;
-            height: 260px;
-            background: url('https://i.imgur.com/8jakDQj.jpeg') center/cover;
-            border: 8px solid white;
-            border-radius: 50%;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-            margin-bottom: 2rem;
-        }
+#cover{
+ position:absolute;
+ width:100%;
+ height:100%;
+ z-index:20;
+ background:
+ linear-gradient(rgba(0,0,0,.20),rgba(0,0,0,.20)),
+ url('https://i.imgur.com/8jakDQj.jpeg') center/cover no-repeat;
+ display:flex;
+ flex-direction:column;
+ justify-content:center;
+ align-items:center;
+ text-align:center;
+}
 
-        .btn-open {
-            background: white;
-            color: var(--text);
-            border: none;
-            padding: 1.2rem 3rem;
-            font-size: 1.1rem;
-            border-radius: 50px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-        }
+.btn-open{
+ background:white;
+ color:#333;
+ border:none;
+ padding:1rem 3rem;
+ font-size:1.1rem;
+ border-radius:50px;
+ font-weight:800;
+ margin-top:2rem;
+ box-shadow:0 10px 30px rgba(0,0,0,.3);
+}
 
-        /* --- CONTENIDO --- */
-        #card {
-            height: 100%;
-            overflow-y: auto;
-            background: linear-gradient(to bottom, #fdfcfb 0%, #eef2f3 100%);
-            padding-bottom: 3rem;
-            opacity: 0;
-            transform: scale(0.9);
-            position: relative;
-        }
+#card{
+ position:relative;
+ width:100%;
+ height:100%;
+ opacity:0;
+ overflow-y:scroll;
+ background:linear-gradient(#dff3ff,#ffffff);
+}
 
-        .header-visual {
-            height: 200px;
-            background: url('https://images.unsplash.com/photo-1616938959950-8b63e8093d97?q=80&w=800&auto=format&fit=crop') center/cover;
-            position: relative;
-            clip-path: ellipse(120% 100% at 50% 0%);
-            overflow: visible !important; /* Solución al emoji cortado */
-        }
+#card::before{
+ content:"";
+ position:absolute;
+ width:200%;
+ height:200px;
+ top:50px;
+ background:
+ radial-gradient(circle at 100px 80px,#fff 60px,transparent 61px),
+ radial-gradient(circle at 300px 70px,#fff 50px,transparent 51px),
+ radial-gradient(circle at 500px 90px,#fff 60px,transparent 61px);
+ animation:clouds 80s linear infinite;
+ opacity:.5;
+ pointer-events:none;
+}
 
-        .floating-icon {
-            position: absolute;
-            bottom: -40px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 4.5rem;
-            line-height: 1;
-            filter: drop-shadow(0 8px 15px rgba(0,0,0,0.15));
-            z-index: 100;
-        }
+#card::after{
+ content:"";
+ position:absolute;
+ width:200%;
+ height:200px;
+ top:150px;
+ background:
+ radial-gradient(circle at 150px 80px,#fff 70px,transparent 71px),
+ radial-gradient(circle at 400px 60px,#fff 60px,transparent 61px);
+ animation:clouds 120s linear infinite reverse;
+ opacity:.35;
+ pointer-events:none;
+}
 
-        .main-content { padding: 4rem 1.5rem 2rem; text-align: center; }
+@keyframes clouds{
+ from{transform:translateX(0);}
+ to{transform:translateX(-50%);}
+}
 
-        .title { font-family: 'Pacifico'; font-size: 2.3rem; color: #ff8fa3; margin-bottom: 0.5rem; }
+.card-header{
+ height:180px;
+ background:url('https://images.unsplash.com/photo-1616938959950-8b63e8093d97?q=80&w=800&auto=format&fit=crop') center/cover;
+ border-radius:0 0 40px 40px;
+ margin-bottom:3.5rem;
+ position:relative;
+}
 
-        .glass-card {
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 1.5rem;
-            margin-bottom: 1.2rem;
-            border: 1px solid rgba(255,255,255,0.5);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.03);
-        }
+.photo-circle{
+ width:120px;height:120px;
+ background:white;
+ border-radius:50%;
+ position:absolute;
+ bottom:-60px;
+ left:50%;
+ transform:translateX(-50%);
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ font-size:3.5rem;
+}
 
-        /* --- TIMER --- */
-        .timer-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .t-box { background: white; padding: 10px 5px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .t-val { display: block; font-size: 1.2rem; font-weight: 700; color: #74b9ff; }
-        .t-lab { font-size: 0.6rem; text-transform: uppercase; color: #b2bec3; }
+.content{padding:0 1.5rem 3rem;text-align:center;}
 
-        /* --- BOTONES --- */
-        .btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            padding: 1.1rem;
-            margin-bottom: 12px;
-            border-radius: 18px;
-            text-decoration: none;
-            font-weight: 700;
-            transition: 0.3s;
-            border: none;
-            cursor: pointer;
-            font-family: inherit;
-        }
+.title{font-family:'Pacifico';color:var(--accent);font-size:2.1rem;}
+.subtitle{color:var(--text-light);margin-bottom:1.5rem;font-weight:700;}
 
-        .btn-cal { background: #34495e; color: white; }
-        .btn-confirm { background: #2ecc71; color: white; box-shadow: 0 8px 20px rgba(46,204,113,0.3); }
-        .btn-map { background: white; color: #636e72; border: 1px solid #dfe6e9; }
-        .btn-theme { background: #6c5ce7; color: white; }
+.timer-container{display:flex;justify-content:center;gap:10px;margin-bottom:2rem;}
+.time-box{background:white;padding:10px;border-radius:15px;min-width:65px;box-shadow:0 4px 10px rgba(0,0,0,.05);}
+.time-val{font-size:1.4rem;font-weight:800;color:var(--accent);}
+.time-label{font-size:.65rem;color:var(--text-light);}
 
-        .bubble {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            opacity: 0.3;
-            pointer-events: none;
-            z-index: 0;
-        }
-    </style>
+.info-grid{
+ background:rgba(255,255,255,.95);
+ border-radius:20px;
+ padding:1.5rem;
+ margin-bottom:1.5rem;
+ text-align:left;
+}
+
+.gift-box{
+ background:#e3f2fd;
+ color:#1565c0;
+ padding:1.2rem;
+ border-radius:18px;
+ font-size:.95rem;
+ line-height:1.6;
+ margin-bottom:1.5rem;
+}
+
+.copy-acc{
+ display:inline-block;
+ margin-top:8px;
+ font-weight:800;
+ background:rgba(21,101,192,.12);
+ padding:6px 14px;
+ border-radius:10px;
+ cursor:pointer;
+ border:1px dashed #1565c0;
+}
+
+.actions{
+ display:flex;
+ flex-direction:column;
+ gap:16px;
+ margin-top:18px;
+}
+
+.btn{
+ width:100%;
+ padding:14px 16px;
+ border-radius:18px;
+ font-weight:800;
+ border:none;
+ cursor:pointer;
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ font-size:1rem;
+ text-decoration:none;
+}
+
+.btn-cal{background:linear-gradient(135deg,#3a3a3a,#1f1f1f);color:white;}
+.btn-map{background:white;color:#333;border:1px solid #e6e6e6;}
+.btn-whatsapp{background:linear-gradient(135deg,#25D366,#18b458);color:white;}
+
+.footer-tag{color:#bbb;font-size:.8rem;margin-top:10px;}
+</style>
 </head>
 <body>
 
 <div id="stage">
-    <div id="cover">
-        <div class="cover-circle"></div>
-        <h1 style="font-family:'Pacifico'; color:white; font-size:2.8rem;">¡Sorpresa!</h1>
-        <p style="color:white; margin: 1rem 0 2rem; opacity:0.9;">Tienes una invitación especial</p>
-        <button class="btn-open" id="btnOpen">ABRIR AHORA</button>
-    </div>
+<div id="cover">
+<h1 style="font-family:'Pacifico';color:white;font-size:2.8rem;">¡Sorpresa!</h1>
+<p style="color:white;opacity:.9;">Tienes una invitación especial</p>
+<button class="btn-open" id="btnOpen">ABRIR AHORA</button>
+</div>
 
-    <div id="card">
-        <div class="header-visual">
-            <div class="floating-icon">👶</div>
-        </div>
+<div id="card">
+<div class="card-header">
+<div class="photo-circle">🧸</div>
+</div>
 
-        <div class="main-content">
-            <h2 class="title">¡Una bebé viene en camino!</h2>
-            <p style="margin-bottom: 2rem; color: #a29bfe; font-weight: 700; letter-spacing: 1px;">¡ACOMPÁÑANOS A CELEBRAR!</p>
+<div class="content">
+<h2 class="title">¡Una bebé está en camino!</h2>
+<p class="subtitle">¡Acompáñanos a celebrar!</p>
 
-            <div class="glass-card timer-grid">
-                <div class="t-box"><span id="d" class="t-val">00</span><span class="t-lab">Días</span></div>
-                <div class="t-box"><span id="h" class="t-val">00</span><span class="t-lab">Horas</span></div>
-                <div class="t-box"><span id="m" class="t-val">00</span><span class="t-lab">Min</span></div>
-                <div class="t-box"><span id="s" class="t-val">00</span><span class="t-lab">Seg</span></div>
-            </div>
+<div class="timer-container" id="timer">
+<div class="time-box"><span id="days" class="time-val">00</span><span class="time-label">Días</span></div>
+<div class="time-box"><span id="hours" class="time-val">00</span><span class="time-label">Horas</span></div>
+<div class="time-box"><span id="mins" class="time-val">00</span><span class="time-label">Min</span></div>
+<div class="time-box"><span id="secs" class="time-val">00</span><span class="time-label">Seg</span></div>
+</div>
 
-            <div class="glass-card" style="text-align: left; font-size: 0.95rem;">
-                <p>📍 <strong>Lugar:</strong> KM 10 vía Matanza (Capilla Baja). Finca El Paraíso.</p>
-                <hr style="margin: 12px 0; border: 0; border-top: 1px dashed #ddd;">
-                <p>📅 <strong>Cita:</strong> 04 de Abril, 2026 - 4:00 PM</p>
-            </div>
+<div class="info-grid">
+  <p><strong>Lugar:</strong><br>
+  KM 10 vía Matanza (Capilla Baja)<br>
+  Finca El Paraíso</p>
+  
+  <br>
+  
+  <p><strong>Fecha y Hora:</strong><br>
+  04 de Abril, 2026<br>
+  4:00 PM</p>
+</div>
 
-            <div class="glass-card" style="background: #fff5f8;">
-                <p style="font-size: 0.9rem; margin-bottom: 12px;">🎁 <strong>Lluvia de Sobres</strong><br>Si deseas tener un detalle:</p>
-                <div style="background: white; border-radius: 12px; padding: 12px; border: 1.5px dashed #ffafcc; cursor: pointer;" onclick="copyAcc()">
-                    <span style="font-size: 0.75rem; color: #ff8fa3; text-transform: uppercase;">Toca para copiar Nequi:</span><br>
-                    <strong style="font-size: 1.2rem;">3228853714</strong>
-                </div>
-            </div>
+<div class="gift-box">
+🎁 <strong>Lluvia de Sobres:</strong><br>
+Tu presencia es nuestro mejor regalo, pero si deseas tener un detalle:<br><br>
+<span class="copy-acc" onclick="copyAccount()">Nequi: 3228853714</span>
 
-            <div class="actions">
-                <button class="btn btn-theme" onclick="showTheme()">🎨 Ver Dinámica / Vestimenta</button>
-                
-                <a href="https://www.google.com/maps/search/?api=1&query=KM+10+vía+Matanza+Capilla+Baja+Finca+El+Paraíso" 
-                   target="_blank" class="btn btn-map">📍 Ver ubicación exacta</a>
+<br><br>
+<strong>También puedes regalar:</strong><br>
+• Pañales etapa RN, P o M<br>
+• Ropita para bebé (0–6 meses)<br>
+• Productos de aseo para bebé
+</div>
 
-                <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Baby+Shower+👶&dates=20260404T160000/20260404T200000&details=¡Acompáñanos+a+celebrar+la+llegada+de+nuestra+bebé!&location=Finca+El+Paraíso,+KM+10+vía+Matanza" 
-                   target="_blank" class="btn btn-cal">📅 Agendar en mi Calendario</a>
+<div class="actions">
+<button class="btn btn-cal" onclick="toggleTheme()">🎨 Ver Temática</button>
 
-                <a href="https://wa.me/573228853714?text=¡Hola!%20Confirmo%20mi%20asistencia%20al%20Baby%20Shower" 
-                   target="_blank" class="btn btn-confirm">✅ Confirmar Asistencia</a>
-            </div>
+<a href="https://maps.app.goo.gl/drr3JZ5VjAsqiFBT6"
+target="_blank" class="btn btn-map">🗺️ Ver Ubicación</a>
 
-            <p style="margin-top: 2.5rem; font-size: 0.8rem; color: #bbb; font-style: italic;">Te esperamos con mucho amor</p>
-        </div>
-    </div>
+<a href="https://wa.me/573228853714?text=Confirmo%20mi%20asistencia%20al%20Baby%20Shower"
+target="_blank" class="btn btn-whatsapp">Confirmar Asistencia</a>
+</div>
+
+<div id="themeBox" style="display:none;margin-top:15px;background:#fff0f3;padding:15px;border-radius:15px;">
+Si crees que será niño: lleva algo azul.<br><br>
+Si crees que será niña: lleva algo rosado.
+</div>
+
+<p class="footer-tag">Te esperamos con mucho amor</p>
+</div>
+</div>
 </div>
 
 <script>
-    // 1. Lógica de apertura
-    document.getElementById('btnOpen').addEventListener('click', () => {
-        const tl = gsap.timeline();
-        tl.to('#btnOpen', { scale: 0, duration: 0.3 })
-          .to('#cover', { yPercent: -100, duration: 1, ease: "power3.inOut" })
-          .to('#card', { opacity: 1, scale: 1, duration: 0.6 }, "-=0.3")
-          .add(() => {
-              confetti({ particleCount: 150, spread: 70, origin: { y: 0.7 }, colors: ['#a2d2ff', '#ffafcc'] });
-          });
-    });
+const eventDate=new Date("April 4, 2026 16:00:00").getTime();
 
-    // 2. Burbujas de fondo
-    function createBubbles() {
-        const container = document.getElementById('card');
-        for (let i = 0; i < 12; i++) {
-            const b = document.createElement('div');
-            b.className = 'bubble';
-            const size = Math.random() * 40 + 10;
-            b.style.width = size + 'px';
-            b.style.height = size + 'px';
-            b.style.left = Math.random() * 100 + '%';
-            b.style.top = Math.random() * 100 + '%';
-            container.appendChild(b);
-            gsap.to(b, { y: -150, x: "random(-20,20)", duration: "random(4,8)", repeat: -1, yoyo: true, ease: "sine.inOut" });
-        }
-    }
-    createBubbles();
+const btnOpen=document.getElementById('btnOpen');
+const tl=gsap.timeline({paused:true});
 
-    // 3. Cuenta regresiva
-    const eventDate = new Date("April 4, 2026 16:00:00").getTime();
-    setInterval(() => {
-        const now = new Date().getTime();
-        const diff = eventDate - now;
-        document.getElementById('d').innerText = Math.floor(diff / (1000 * 60 * 60 * 24));
-        document.getElementById('h').innerText = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        document.getElementById('m').innerText = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-        document.getElementById('s').innerText = Math.floor((diff % (1000 * 60)) / 1000);
-    }, 1000);
+tl.to(btnOpen,{duration:.2,scale:.8})
+.to(btnOpen,{duration:.2,scale:0,opacity:0})
+.to("#cover",{duration:.8,yPercent:-100})
+.set("#card",{opacity:1})
+.add(()=>{confetti({particleCount:80,spread:70});});
 
-    // 4. Funciones interactivas
-    function copyAcc() {
-        navigator.clipboard.writeText("3228853714");
-        Swal.fire({
-            title: '¡Copiado!',
-            text: 'El número Nequi ha sido copiado al portapapeles.',
-            icon: 'success',
-            confirmButtonColor: '#ffafcc'
-        });
-        confetti({ particleCount: 40, scalar: 0.8, colors: ['#2ecc71'] });
-    }
+btnOpen.addEventListener('click',()=>tl.play());
 
-    function showTheme() {
-        Swal.fire({
-            title: '¿Niño o Niña?',
-            html: '<p>Ayúdanos con tu creencia:</p><br><p><b>Si crees que es NIÑO:</b> viste algo azul 💙</p><p><b>Si crees que es NIÑA:</b> viste algo rosado 💖</p>',
-            confirmButtonText: '¡Entendido!',
-            confirmButtonColor: '#6c5ce7'
-        });
-    }
+function copyAccount(){
+ navigator.clipboard.writeText("3228853714");
+ alert("Número copiado");
+}
+
+function toggleTheme(){
+ const box=document.getElementById("themeBox");
+ box.style.display=box.style.display==="none"?"block":"none";
+}
+
+setInterval(function(){
+ const now=new Date().getTime();
+ const d=Math.floor((eventDate-now)/(1000*60*60*24));
+ const h=Math.floor((eventDate-now)%(1000*60*60*24)/(1000*60*60));
+ const m=Math.floor((eventDate-now)%(1000*60*60)/(1000*60));
+ const s=Math.floor((eventDate-now)%(1000*60)/1000);
+
+ days.innerText=d;
+ hours.innerText=h;
+ mins.innerText=m;
+ secs.innerText=s;
+},1000);
 </script>
 
 </body>
