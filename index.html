@@ -41,7 +41,6 @@ body{
  overflow:hidden;
 }
 
-/* PORTADA CON IMAGEN */
 #cover{
  position:absolute;
  width:100%;
@@ -68,7 +67,7 @@ body{
  margin-top:2rem;
  box-shadow:0 10px 30px rgba(0,0,0,.3);
 }
-/* FONDO INTERNO */
+
 #card{
  position:relative;
  width:100%;
@@ -78,7 +77,6 @@ body{
  background:linear-gradient(#dff3ff,#ffffff);
 }
 
-/* NUBES CAPA 1 */
 #card::before{
  content:"";
  position:absolute;
@@ -93,7 +91,7 @@ body{
  opacity:.5;
  pointer-events:none;
 }
-/* NUBES CAPA 2 */
+
 #card::after{
  content:"";
  position:absolute;
@@ -112,6 +110,7 @@ body{
  from{transform:translateX(0);}
  to{transform:translateX(-50%);}
 }
+
 .card-header{
  height:180px;
  background:url('https://images.unsplash.com/photo-1616938959950-8b63e8093d97?q=80&w=800&auto=format&fit=crop') center/cover;
@@ -152,7 +151,6 @@ body{
  text-align:left;
 }
 
-/* REGALOS */
 .gift-box{
  background:#e3f2fd;
  color:#1565c0;
@@ -174,7 +172,6 @@ body{
  border:1px dashed #1565c0;
 }
 
-/* BOTONES */
 .actions{
  display:flex;
  flex-direction:column;
@@ -230,9 +227,8 @@ body{
 
 <div class="info-grid">
   <p><strong>Lugar:</strong><br>
-  Cra. 21b #116 - 67 Provenza<br>
-  Frente Conjunto Comultrasan<br>
-  Bucaramanga, Santander</p>
+  KM 10 vía Matanza (Capilla Baja)<br>
+  Finca El Paraíso</p>
   
   <br>
   
@@ -244,7 +240,7 @@ body{
 <div class="gift-box">
 🎁 <strong>Lluvia de Sobres:</strong><br>
 Tu presencia es nuestro mejor regalo, pero si deseas tener un detalle:<br><br>
-<span class="copy-acc" onclick="copyAccount()">Nequi: 3228853714</span>
+<span class="copy-acc" onclick="copyAccount()">Nequi: 3239261230</span>
 
 <br><br>
 <strong>También puedes regalar:</strong><br>
@@ -256,7 +252,7 @@ Tu presencia es nuestro mejor regalo, pero si deseas tener un detalle:<br><br>
 <div class="actions">
 <button class="btn btn-cal" onclick="toggleTheme()">🎨 Ver Temática</button>
 
-<a href="https://www.google.com/maps/search/?api=1&query=Cra+21b+11667+Bucaramanga+Santander"
+<a href="https://maps.app.goo.gl/drr3JZ5VjAsqiFBT6"
 target="_blank" class="btn btn-map">🗺️ Ver Ubicación</a>
 
 <a href="https://wa.me/573228853714?text=Confirmo%20mi%20asistencia%20al%20Baby%20Shower"
