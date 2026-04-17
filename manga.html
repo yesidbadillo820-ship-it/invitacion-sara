@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manga AI Studio — Genera historietas desde un boceto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+ --bg:#0f0f14;
+ --panel:#1a1a22;
+ --ink:#eeeef2;
+ --muted:#8a8aa0;
+ --accent:#ff3366;
+ --accent-2:#ffd93d;
+ --line:#2a2a36;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+ font-family:'Nunito',sans-serif;
+ background:var(--bg);
+ color:var(--ink);
+ min-height:100vh;
+}
+header{
+ padding:1.2rem 1.5rem;
+ border-bottom:1px solid var(--line);
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ flex-wrap:wrap;
+ gap:1rem;
+}
+h1{
+ font-family:'Bangers',cursive;
+ font-size:2rem;
+ letter-spacing:2px;
+ color:var(--accent);
+ -webkit-text-stroke:1px var(--ink);
+}
+.subtitle{color:var(--muted);font-size:.85rem;margin-top:2px;}
+.key-row{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;}
+.key-row input{
+ background:var(--panel);
+ border:1px solid var(--line);
+ color:var(--ink);
+ padding:.55rem .7rem;
+ border-radius:8px;
+ font-family:inherit;
+ font-size:.85rem;
+ min-width:280px;
+}
+.key-row button{
+ background:var(--panel);
+ border:1px solid var(--line);
+ color:var(--ink);
+ padding:.55rem .9rem;
+ border-radius:8px;
+ cursor:pointer;
+ font-family:inherit;
+ font-size:.85rem;
+}
+main{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:1.5rem;
+ padding:1.5rem;
+ max-width:1400px;
+ margin:0 auto;
+}
+@media(max-width:900px){main{grid-template-columns:1fr;}}
+
+.card{
+ background:var(--panel);
+ border:1px solid var(--line);
+ border-radius:14px;
+ padding:1.2rem;
+}
+.card h2{
+ font-family:'Bangers',cursive;
+ letter-spacing:1.5px;
+ font-size:1.3rem;
+ margin-bottom:.8rem;
+ color:var(--accent-2);
+}
+
+.canvas-wrap{
+ position:relative;
+ background:#fff;
+ border-radius:10px;
+ overflow:hidden;
+ aspect-ratio:1/1;
+}
+#sketch{
+ display:block;
+ width:100%;
+ height:100%;
+ cursor:crosshair;
+ touch-action:none;
+}
+.canvas-tools{
+ display:flex;
+ gap:.5rem;
+ margin-top:.8rem;
+ flex-wrap:wrap;
+}
+.canvas-tools button, .canvas-tools label{
+ background:#252532;
+ border:1px solid var(--line);
+ color:var(--ink);
+ padding:.55rem .9rem;
+ border-radius:8px;
+ cursor:pointer;
+ font-size:.85rem;
+ font-family:inherit;
+}
+.canvas-tools input[type=color]{
+ width:42px;height:34px;
+ border:none;background:none;
+ padding:0;cursor:pointer;
+ border-radius:8px;
+}
+.canvas-tools input[type=range]{vertical-align:middle;}
+
+label.block{display:block;color:var(--muted);font-size:.8rem;margin:1rem 0 .4rem;}
+
+textarea, select{
+ width:100%;
+ background:#252532;
+ border:1px solid var(--line);
+ color:var(--ink);
+ padding:.7rem .8rem;
+ border-radius:8px;
+ font-family:inherit;
+ font-size:.9rem;
+ resize:vertical;
+}
+textarea{min-height:80px;}
+
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;}
+
+.btn-generate{
+ width:100%;
+ margin-top:1.2rem;
+ background:linear-gradient(135deg,var(--accent),#ff6b81);
+ color:#fff;
+ border:none;
+ padding:1rem;
+ border-radius:12px;
+ font-family:'Bangers',cursive;
+ font-size:1.3rem;
+ letter-spacing:2px;
+ cursor:pointer;
+ transition:transform .15s;
+}
+.btn-generate:hover{transform:translateY(-2px);}
+.btn-generate:disabled{opacity:.5;cursor:wait;transform:none;}
+
+#status{
+ margin-top:.8rem;
+ padding:.7rem;
+ border-radius:8px;
+ background:#252532;
+ color:var(--muted);
+ font-size:.85rem;
+ min-height:1.2em;
+}
+#status.error{background:#3a1a22;color:#ff8899;}
+#status.ok{background:#1a2f2a;color:#7ae0b3;}
+
+#output{
+ display:grid;
+ grid-template-columns:repeat(2,1fr);
+ gap:.8rem;
+}
+@media(max-width:500px){#output{grid-template-columns:1fr;}}
+
+.panel{
+ background:#fff;
+ color:#111;
+ border:3px solid #111;
+ border-radius:4px;
+ overflow:hidden;
+ position:relative;
+ box-shadow:4px 4px 0 #111;
+ display:flex;
+ flex-direction:column;
+ min-height:220px;
+}
+.panel-img{
+ width:100%;
+ aspect-ratio:1/1;
+ background:#f0f0f0;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ color:#999;
+ font-size:.85rem;
+}
+.panel-img img{width:100%;height:100%;object-fit:cover;display:block;}
+.panel-caption{
+ padding:.5rem .7rem;
+ font-size:.8rem;
+ font-weight:700;
+ border-top:2px solid #111;
+ background:#fffbe8;
+}
+.panel-dialogue{
+ padding:.6rem .7rem;
+ font-family:'Bangers',cursive;
+ font-size:1rem;
+ letter-spacing:.5px;
+ color:#111;
+ background:#fff;
+ border-top:2px solid #111;
+ line-height:1.3;
+}
+.panel-number{
+ position:absolute;
+ top:6px;left:6px;
+ background:#111;
+ color:#fff;
+ width:26px;height:26px;
+ display:flex;align-items:center;justify-content:center;
+ font-family:'Bangers',cursive;
+ font-size:1rem;
+ border-radius:50%;
+ z-index:2;
+}
+
+.empty-state{
+ grid-column:1/-1;
+ text-align:center;
+ padding:3rem 1rem;
+ color:var(--muted);
+}
+.empty-state .big{font-size:3rem;margin-bottom:.5rem;}
+
+.spinner{
+ display:inline-block;
+ width:14px;height:14px;
+ border:2px solid var(--muted);
+ border-top-color:var(--accent);
+ border-radius:50%;
+ animation:spin .8s linear infinite;
+ vertical-align:middle;
+ margin-right:.4rem;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+details{margin-top:1rem;}
+details summary{cursor:pointer;color:var(--muted);font-size:.85rem;}
+details pre{
+ background:#12121a;
+ border:1px solid var(--line);
+ padding:.8rem;
+ border-radius:8px;
+ margin-top:.5rem;
+ overflow:auto;
+ font-size:.75rem;
+ max-height:300px;
+ color:#bbb;
+}
+</style>
+</head>
+<body>
+
+<header>
+ <div>
+  <h1>MANGA AI STUDIO</h1>
+  <div class="subtitle">Convierte tu boceto en una historieta · powered by Claude</div>
+ </div>
+ <div class="key-row">
+  <input type="password" id="apiKey" placeholder="sk-ant-... (tu Anthropic API key)">
+  <button id="saveKey">Guardar</button>
+ </div>
+</header>
+
+<main>
+ <!-- INPUT -->
+ <section class="card">
+  <h2>1 · Tu boceto</h2>
+
+  <div class="canvas-wrap">
+   <canvas id="sketch" width="800" height="800"></canvas>
+  </div>
+
+  <div class="canvas-tools">
+   <input type="color" id="color" value="#000000" title="Color">
+   <input type="range" id="size" min="1" max="30" value="4" title="Grosor">
+   <button id="eraser">Borrador</button>
+   <button id="clear">Limpiar</button>
+   <label>
+    Subir imagen
+    <input type="file" id="upload" accept="image/*" style="display:none;">
+   </label>
+  </div>
+
+  <label class="block">Describe la historia / estilo</label>
+  <textarea id="prompt" placeholder="Ej: Un niño descubre un dragón en su jardín. Estilo shonen, blanco y negro, dinámico."></textarea>
+
+  <div class="row2" style="margin-top:.8rem;">
+   <div>
+    <label class="block">Estilo</label>
+    <select id="style">
+     <option value="manga japonés blanco y negro, tinta sobre papel, estilo shonen, líneas dinámicas">Shonen B/N</option>
+     <option value="manga shojo, pastel, ojos grandes, brillos, atmósfera romántica">Shojo pastel</option>
+     <option value="comic americano, colores vibrantes, sombreado duro, trama de puntos">Comic americano</option>
+     <option value="estilo chibi, caricatura tierna, colores suaves">Chibi</option>
+     <option value="manga seinen oscuro, realismo, alto contraste, sombras pesadas">Seinen oscuro</option>
+     <option value="webtoon coreano, colores suaves, digital, limpio">Webtoon</option>
+    </select>
+   </div>
+   <div>
+    <label class="block">Número de viñetas</label>
+    <select id="numPanels">
+     <option value="4">4 viñetas</option>
+     <option value="6" selected>6 viñetas</option>
+     <option value="8">8 viñetas</option>
+    </select>
+   </div>
+  </div>
+
+  <button class="btn-generate" id="generate">GENERAR MANGA</button>
+  <div id="status">Dibuja un boceto o sube una imagen, escribe tu idea y pulsa generar.</div>
+
+  <details>
+   <summary>¿Cómo funciona?</summary>
+   <pre>1. Claude analiza tu boceto + tu descripción (visión multimodal).
+2. Genera un guion estructurado: escenas, diálogos y prompts de imagen por viñeta.
+3. Cada viñeta se ilustra con Pollinations AI (gratis, sin API key).
+
+Tu API key de Anthropic se guarda solo en tu navegador (localStorage).
+Obtén una en: console.anthropic.com</pre>
+  </details>
+ </section>
+
+ <!-- OUTPUT -->
+ <section class="card">
+  <h2>2 · Tu historieta</h2>
+  <div id="output">
+   <div class="empty-state">
+    <div class="big">🎨</div>
+    <div>Las viñetas generadas aparecerán aquí.</div>
+   </div>
+  </div>
+ </section>
+</main>
+
+<script>
+// ============ CANVAS DE DIBUJO ============
+const canvas = document.getElementById('sketch');
+const ctx = canvas.getContext('2d');
+ctx.fillStyle = '#fff';
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+ctx.lineCap = 'round';
+ctx.lineJoin = 'round';
+
+let drawing = false, lastX = 0, lastY = 0;
+let currentColor = '#000000';
+let currentSize = 4;
+let erasing = false;
+
+function getPos(e){
+ const rect = canvas.getBoundingClientRect();
+ const scaleX = canvas.width / rect.width;
+ const scaleY = canvas.height / rect.height;
+ const t = e.touches ? e.touches[0] : e;
+ return { x:(t.clientX-rect.left)*scaleX, y:(t.clientY-rect.top)*scaleY };
+}
+function start(e){ e.preventDefault(); drawing = true; const p = getPos(e); lastX=p.x; lastY=p.y; }
+function draw(e){
+ if(!drawing) return;
+ e.preventDefault();
+ const p = getPos(e);
+ ctx.strokeStyle = erasing ? '#ffffff' : currentColor;
+ ctx.lineWidth = erasing ? currentSize*3 : currentSize;
+ ctx.beginPath();
+ ctx.moveTo(lastX, lastY);
+ ctx.lineTo(p.x, p.y);
+ ctx.stroke();
+ lastX=p.x; lastY=p.y;
+}
+function end(){ drawing = false; }
+
+canvas.addEventListener('mousedown', start);
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('mouseup', end);
+canvas.addEventListener('mouseleave', end);
+canvas.addEventListener('touchstart', start);
+canvas.addEventListener('touchmove', draw);
+canvas.addEventListener('touchend', end);
+
+document.getElementById('color').addEventListener('input', e => { currentColor = e.target.value; erasing = false; });
+document.getElementById('size').addEventListener('input', e => { currentSize = +e.target.value; });
+document.getElementById('eraser').addEventListener('click', () => { erasing = !erasing; });
+document.getElementById('clear').addEventListener('click', () => {
+ ctx.fillStyle = '#fff';
+ ctx.fillRect(0, 0, canvas.width, canvas.height);
+});
+
+document.getElementById('upload').addEventListener('change', e => {
+ const file = e.target.files[0];
+ if(!file) return;
+ const reader = new FileReader();
+ reader.onload = ev => {
+  const img = new Image();
+  img.onload = () => {
+   ctx.fillStyle = '#fff';
+   ctx.fillRect(0, 0, canvas.width, canvas.height);
+   const ratio = Math.min(canvas.width/img.width, canvas.height/img.height);
+   const w = img.width*ratio, h = img.height*ratio;
+   ctx.drawImage(img, (canvas.width-w)/2, (canvas.height-h)/2, w, h);
+  };
+  img.src = ev.target.result;
+ };
+ reader.readAsDataURL(file);
+});
+
+// ============ API KEY ============
+const apiKeyInput = document.getElementById('apiKey');
+apiKeyInput.value = localStorage.getItem('anthropic_api_key') || '';
+document.getElementById('saveKey').addEventListener('click', () => {
+ localStorage.setItem('anthropic_api_key', apiKeyInput.value.trim());
+ setStatus('API key guardada localmente.', 'ok');
+});
+
+// ============ STATUS ============
+const statusEl = document.getElementById('status');
+function setStatus(msg, type=''){
+ statusEl.className = type;
+ statusEl.innerHTML = (type==='' && msg.includes('...') ? '<span class="spinner"></span>' : '') + msg;
+}
+
+// ============ GENERAR ============
+document.getElementById('generate').addEventListener('click', generate);
+
+async function generate(){
+ const key = apiKeyInput.value.trim() || localStorage.getItem('anthropic_api_key');
+ if(!key){
+  setStatus('Falta tu Anthropic API key (arriba a la derecha).', 'error');
+  return;
+ }
+ const userPrompt = document.getElementById('prompt').value.trim();
+ if(!userPrompt){
+  setStatus('Describe al menos brevemente la historia.', 'error');
+  return;
+ }
+
+ const btn = document.getElementById('generate');
+ btn.disabled = true;
+ setStatus('Analizando tu boceto con Claude...');
+
+ try {
+  const sketchDataUrl = canvas.toDataURL('image/jpeg', 0.85);
+  const base64 = sketchDataUrl.split(',')[1];
+
+  const style = document.getElementById('style').value;
+  const numPanels = +document.getElementById('numPanels').value;
+
+  const script = await callClaude(key, base64, userPrompt, style, numPanels);
+
+  setStatus(`Guion listo. Generando ${script.panels.length} viñetas...`);
+  renderPanels(script);
+
+  for(let i = 0; i < script.panels.length; i++){
+   const p = script.panels[i];
+   setStatus(`Dibujando viñeta ${i+1} de ${script.panels.length}...`);
+   const imgEl = document.querySelector(`#panel-${i} .panel-img`);
+   const imgUrl = buildImageUrl(p.imagePrompt, style, i);
+   await loadImageInto(imgEl, imgUrl);
+  }
+
+  setStatus('¡Manga completado! Desplázate para verlo.', 'ok');
+ } catch(err){
+  console.error(err);
+  setStatus('Error: ' + (err.message || err), 'error');
+ } finally {
+  btn.disabled = false;
+ }
+}
+
+async function callClaude(apiKey, imageBase64, userPrompt, style, numPanels){
+ const systemPrompt = `Eres un guionista y director de manga. Analiza el boceto del usuario y convierte su idea en una historieta de exactamente ${numPanels} viñetas.
+
+Responde SOLO con JSON válido, sin markdown, con esta forma:
+{
+ "title": "Título corto",
+ "panels": [
+  {
+   "caption": "Narración breve (opcional, máx 60 chars)",
+   "dialogue": "Diálogo del personaje (opcional, máx 80 chars)",
+   "imagePrompt": "Descripción visual detallada en inglés para generar la imagen. Incluye composición, personajes, expresión, acción, encuadre (close-up/medium/wide), ambiente."
+  }
+ ]
+}
+
+El estilo visual debe ser: ${style}.
+Cada imagePrompt debe empezar con "${style}," y después la descripción de la escena. Sé específico con ángulos de cámara y emociones. Usa el boceto como inspiración visual para los personajes o la composición inicial.`;
+
+ const body = {
+  model: 'claude-sonnet-4-6',
+  max_tokens: 2000,
+  system: systemPrompt,
+  messages: [{
+   role: 'user',
+   content: [
+    { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: imageBase64 } },
+    { type: 'text', text: `Mi idea: ${userPrompt}\n\nGenera el guion en JSON.` }
+   ]
+  }]
+ };
+
+ const res = await fetch('https://api.anthropic.com/v1/messages', {
+  method: 'POST',
+  headers: {
+   'content-type': 'application/json',
+   'x-api-key': apiKey,
+   'anthropic-version': '2023-06-01',
+   'anthropic-dangerous-direct-browser-access': 'true'
+  },
+  body: JSON.stringify(body)
+ });
+
+ if(!res.ok){
+  const t = await res.text();
+  throw new Error(`Claude API ${res.status}: ${t.slice(0,200)}`);
+ }
+ const data = await res.json();
+ const text = data.content?.[0]?.text || '';
+ const jsonMatch = text.match(/\{[\s\S]*\}/);
+ if(!jsonMatch) throw new Error('Claude no devolvió JSON válido.');
+ return JSON.parse(jsonMatch[0]);
+}
+
+function buildImageUrl(prompt, style, seedBase){
+ const fullPrompt = prompt.toLowerCase().includes(style.slice(0,20).toLowerCase())
+  ? prompt
+  : `${style}, ${prompt}`;
+ const encoded = encodeURIComponent(fullPrompt);
+ const seed = Date.now() % 100000 + seedBase*17;
+ return `https://image.pollinations.ai/prompt/${encoded}?width=512&height=512&seed=${seed}&nologo=true`;
+}
+
+function loadImageInto(container, url){
+ return new Promise(resolve => {
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+   container.innerHTML = '';
+   container.appendChild(img);
+   resolve();
+  };
+  img.onerror = () => {
+   container.innerHTML = '<div style="color:#c33;font-size:.8rem;padding:1rem;text-align:center;">Error al generar imagen</div>';
+   resolve();
+  };
+  img.src = url;
+ });
+}
+
+function renderPanels(script){
+ const out = document.getElementById('output');
+ out.innerHTML = '';
+ if(script.title){
+  const h = document.createElement('div');
+  h.style.cssText = 'grid-column:1/-1;font-family:Bangers,cursive;font-size:1.8rem;letter-spacing:2px;color:var(--accent-2);text-align:center;margin-bottom:.5rem;';
+  h.textContent = script.title;
+  out.appendChild(h);
+ }
+ script.panels.forEach((p, i) => {
+  const el = document.createElement('div');
+  el.className = 'panel';
+  el.id = `panel-${i}`;
+  el.innerHTML = `
+   <div class="panel-number">${i+1}</div>
+   <div class="panel-img"><span class="spinner"></span> generando...</div>
+   ${p.caption ? `<div class="panel-caption">${escape(p.caption)}</div>` : ''}
+   ${p.dialogue ? `<div class="panel-dialogue">💬 ${escape(p.dialogue)}</div>` : ''}
+  `;
+  out.appendChild(el);
+ });
+}
+
+function escape(s){
+ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+</script>
+
+</body>
+</html>
