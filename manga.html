@@ -270,10 +270,10 @@ details pre{
 <header>
  <div>
   <h1>MANGA AI STUDIO</h1>
-  <div class="subtitle">Convierte tu boceto en una historieta · powered by Claude</div>
+  <div class="subtitle">Convierte tu boceto en una historieta · powered by Gemini</div>
  </div>
  <div class="key-row">
-  <input type="password" id="apiKey" placeholder="sk-ant-... (tu Anthropic API key)">
+  <input type="password" id="apiKey" placeholder="AIza... (tu Google Gemini API key, gratis)">
   <button id="saveKey">Guardar</button>
  </div>
 </header>
@@ -328,12 +328,13 @@ details pre{
 
   <details>
    <summary>¿Cómo funciona?</summary>
-   <pre>1. Claude analiza tu boceto + tu descripción (visión multimodal).
+   <pre>1. Gemini 2.5 Flash analiza tu boceto + tu descripción (visión multimodal, gratis).
 2. Genera un guion estructurado: escenas, diálogos y prompts de imagen por viñeta.
 3. Cada viñeta se ilustra con Pollinations AI (gratis, sin API key).
 
-Tu API key de Anthropic se guarda solo en tu navegador (localStorage).
-Obtén una en: console.anthropic.com</pre>
+Tu API key de Google se guarda solo en tu navegador (localStorage).
+Obtén una GRATIS en: https://aistudio.google.com/apikey
+(15 requests/minuto sin costo)</pre>
   </details>
  </section>
 
@@ -421,9 +422,9 @@ document.getElementById('upload').addEventListener('change', e => {
 
 // ============ API KEY ============
 const apiKeyInput = document.getElementById('apiKey');
-apiKeyInput.value = localStorage.getItem('anthropic_api_key') || '';
+apiKeyInput.value = localStorage.getItem('gemini_api_key') || '';
 document.getElementById('saveKey').addEventListener('click', () => {
- localStorage.setItem('anthropic_api_key', apiKeyInput.value.trim());
+ localStorage.setItem('gemini_api_key', apiKeyInput.value.trim());
  setStatus('API key guardada localmente.', 'ok');
 });
 
@@ -438,9 +439,9 @@ function setStatus(msg, type=''){
 document.getElementById('generate').addEventListener('click', generate);
 
 async function generate(){
- const key = apiKeyInput.value.trim() || localStorage.getItem('anthropic_api_key');
+ const key = apiKeyInput.value.trim() || localStorage.getItem('gemini_api_key');
  if(!key){
-  setStatus('Falta tu Anthropic API key (arriba a la derecha).', 'error');
+  setStatus('Falta tu API key de Google Gemini (gratis en aistudio.google.com/apikey).', 'error');
   return;
  }
  const userPrompt = document.getElementById('prompt').value.trim();
@@ -451,7 +452,7 @@ async function generate(){
 
  const btn = document.getElementById('generate');
  btn.disabled = true;
- setStatus('Analizando tu boceto con Claude...');
+ setStatus('Analizando tu boceto con Gemini...');
 
  try {
   const sketchDataUrl = canvas.toDataURL('image/jpeg', 0.85);
@@ -460,7 +461,7 @@ async function generate(){
   const style = document.getElementById('style').value;
   const numPanels = +document.getElementById('numPanels').value;
 
-  const script = await callClaude(key, base64, userPrompt, style, numPanels);
+  const script = await callGemini(key, base64, userPrompt, style, numPanels);
 
   setStatus(`Guion listo. Generando ${script.panels.length} viñetas...`);
   renderPanels(script);
@@ -482,7 +483,7 @@ async function generate(){
  }
 }
 
-async function callClaude(apiKey, imageBase64, userPrompt, style, numPanels){
+async function callGemini(apiKey, imageBase64, userPrompt, style, numPanels){
  const systemPrompt = `Eres un guionista y director de manga. Analiza el boceto del usuario y convierte su idea en una historieta de exactamente ${numPanels} viñetas.
 
 Responde SOLO con JSON válido, sin markdown, con esta forma:
@@ -501,37 +502,37 @@ El estilo visual debe ser: ${style}.
 Cada imagePrompt debe empezar con "${style}," y después la descripción de la escena. Sé específico con ángulos de cámara y emociones. Usa el boceto como inspiración visual para los personajes o la composición inicial.`;
 
  const body = {
-  model: 'claude-sonnet-4-6',
-  max_tokens: 2000,
-  system: systemPrompt,
-  messages: [{
+  systemInstruction: { parts: [{ text: systemPrompt }] },
+  contents: [{
    role: 'user',
-   content: [
-    { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: imageBase64 } },
-    { type: 'text', text: `Mi idea: ${userPrompt}\n\nGenera el guion en JSON.` }
+   parts: [
+    { inline_data: { mime_type: 'image/jpeg', data: imageBase64 } },
+    { text: `Mi idea: ${userPrompt}\n\nGenera el guion en JSON.` }
    ]
-  }]
+  }],
+  generationConfig: {
+   responseMimeType: 'application/json',
+   maxOutputTokens: 2048,
+   temperature: 0.9
+  }
  };
 
- const res = await fetch('https://api.anthropic.com/v1/messages', {
+ const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
+ const res = await fetch(url, {
   method: 'POST',
-  headers: {
-   'content-type': 'application/json',
-   'x-api-key': apiKey,
-   'anthropic-version': '2023-06-01',
-   'anthropic-dangerous-direct-browser-access': 'true'
-  },
+  headers: { 'content-type': 'application/json' },
   body: JSON.stringify(body)
  });
 
  if(!res.ok){
   const t = await res.text();
-  throw new Error(`Claude API ${res.status}: ${t.slice(0,200)}`);
+  throw new Error(`Gemini API ${res.status}: ${t.slice(0,200)}`);
  }
  const data = await res.json();
- const text = data.content?.[0]?.text || '';
+ const text = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+ if(!text) throw new Error('Gemini no devolvió contenido.');
  const jsonMatch = text.match(/\{[\s\S]*\}/);
- if(!jsonMatch) throw new Error('Claude no devolvió JSON válido.');
+ if(!jsonMatch) throw new Error('Gemini no devolvió JSON válido.');
  return JSON.parse(jsonMatch[0]);
 }
 
