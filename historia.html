@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Bajo la misma lluvia · una historia de amor</title>
+<meta name="theme-color" content="#0c0814">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Dancing+Script:wght@600;700&family=Tangerine:wght@700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{
+  font-family:'Cormorant Garamond',serif; color:#f7eef2; background:#0c0814;
+  --c1:#0e1b2e; --c2:#1b2f4a; --accent:#7fb0e0;
+  transition:--c1 1s, --c2 1s;
+}
+
+/* themes */
+body[data-theme="night"]{--c1:#0d0a22;--c2:#241749;--accent:#b59bff;}
+body[data-theme="rain"]{--c1:#0b1626;--c2:#1a3048;--accent:#86b4e6;}
+body[data-theme="warm"]{--c1:#2a0f16;--c2:#5a2433;--accent:#ffb38a;}
+body[data-theme="grey"]{--c1:#14141c;--c2:#2c2733;--accent:#caa9bd;}
+body[data-theme="gold"]{--c1:#2a1d0c;--c2:#6b4a1f;--accent:#f3d39a;}
+body[data-theme="dawn"]{--c1:#2a1320;--c2:#67364c;--accent:#ffc2d9;}
+
+#bg{position:fixed; inset:0; z-index:-4; background-color:var(--c1);
+  background-image:
+    radial-gradient(1100px 800px at 78% -10%, color-mix(in srgb, var(--accent) 28%, transparent), transparent 58%),
+    radial-gradient(900px 800px at -10% 112%, var(--c2), transparent 62%),
+    linear-gradient(165deg, var(--c1), var(--c2) 60%, var(--c1));
+  transition:background-color 1.4s ease, background-image 1.4s ease;}
+
+.aurora{position:fixed; inset:-25%; z-index:-3; pointer-events:none; mix-blend-mode:screen; filter:blur(46px); opacity:.45;}
+.aurora span{position:absolute; width:62vw; height:62vw; border-radius:45%; background:radial-gradient(circle, color-mix(in srgb,var(--accent) 55%, transparent), transparent 60%);}
+.aurora .a1{top:-12%; left:-8%; animation:au1 30s ease-in-out infinite;}
+.aurora .a2{bottom:-16%; right:-10%; animation:au2 38s ease-in-out infinite;}
+@keyframes au1{0%,100%{transform:translate(0,0) rotate(0);}50%{transform:translate(8%,6%) rotate(36deg);}}
+@keyframes au2{0%,100%{transform:translate(0,0) rotate(0);}50%{transform:translate(-7%,-5%) rotate(-30deg);}}
+
+#fx{position:fixed; inset:0; z-index:-2; pointer-events:none;}
+#grain{position:fixed; inset:0; z-index:70; pointer-events:none; opacity:.05; mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");}
+#vignette{position:fixed; inset:0; z-index:60; pointer-events:none; box-shadow:inset 0 0 220px 80px rgba(8,4,12,.9);}
+
+/* transition flash */
+#fade{position:fixed; inset:0; z-index:80; background:#0c0814; opacity:0; pointer-events:none; transition:opacity .45s ease;}
+#fade.on{opacity:1;}
+
+/* ============ Top bar ============ */
+#bar{position:fixed; top:0; left:0; right:0; z-index:40; display:flex; align-items:center; justify-content:space-between;
+  padding:14px 16px; opacity:0; transition:opacity .8s ease; pointer-events:none;}
+#bar.show{opacity:1; pointer-events:auto;}
+#chapter{font-style:italic; letter-spacing:2px; font-size:.85rem; color:var(--accent); text-shadow:0 1px 10px rgba(0,0,0,.6);}
+.bar-btns{display:flex; gap:10px;}
+.icon-btn{width:38px; height:38px; border-radius:50%; border:1px solid color-mix(in srgb,var(--accent) 45%, transparent);
+  background:rgba(0,0,0,.3); backdrop-filter:blur(6px); color:var(--accent); cursor:pointer; font-size:1rem;
+  display:flex; align-items:center; justify-content:center; transition:transform .2s ease;}
+.icon-btn:active{transform:scale(.9);}
+.icon-btn.playing{box-shadow:0 0 14px color-mix(in srgb,var(--accent) 60%, transparent);}
+
+/* ============ Title screen ============ */
+#title{position:fixed; inset:0; z-index:50; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:2rem; transition:opacity 1s ease, visibility 1s;}
+#title.gone{opacity:0; visibility:hidden;}
+.t-eyebrow{font-style:italic; letter-spacing:5px; text-transform:uppercase; font-size:.72rem; color:var(--accent); opacity:.85; margin-bottom:1.2rem;}
+.t-title{font-family:'Playfair Display',serif; font-weight:700; font-size:clamp(2.4rem,11vw,4rem); line-height:1.05;
+  background:linear-gradient(90deg,#fff0f5,#ffc9dd,#fff0f5); -webkit-background-clip:text; background-clip:text; color:transparent;
+  text-shadow:0 4px 36px rgba(255,150,190,.35);}
+.t-sub{font-style:italic; font-size:clamp(1.1rem,4.6vw,1.4rem); opacity:.85; margin-top:1rem; max-width:30ch;}
+.t-heart{font-size:2.6rem; margin-bottom:.4rem; filter:drop-shadow(0 0 22px #ff6f9c); animation:beat 1.6s ease-in-out infinite;}
+@keyframes beat{0%,100%{transform:scale(1);}15%{transform:scale(1.16);}30%{transform:scale(1);}45%{transform:scale(1.1);}}
+.t-actions{display:flex; flex-direction:column; gap:14px; margin-top:2.4rem; width:min(80vw,300px);}
+.t-btn{padding:.95rem 1.6rem; border-radius:50px; font-family:'Cormorant Garamond',serif; font-weight:600; font-size:1.15rem;
+  letter-spacing:1px; cursor:pointer; border:none; transition:transform .2s ease;}
+.t-btn:active{transform:scale(.96);}
+.t-btn.primary{background:linear-gradient(135deg,#ff7a9c,#e23e6b); color:#fff; box-shadow:0 12px 34px rgba(226,62,107,.5);}
+.t-btn.ghost{background:transparent; color:var(--accent); border:1px solid color-mix(in srgb,var(--accent) 50%, transparent);}
+.t-note{margin-top:1.8rem; font-style:italic; font-size:.85rem; opacity:.5; letter-spacing:1px;}
+
+/* ============ Story stage ============ */
+#stage{position:fixed; inset:0; z-index:30; display:none; flex-direction:column; justify-content:flex-end; padding:0 0 4vh;}
+#stage.show{display:flex;}
+
+#dialogue{margin:0 auto; width:min(680px,92vw); cursor:pointer;}
+.speaker{display:inline-block; font-family:'Playfair Display',serif; font-weight:600; font-size:1rem; letter-spacing:1px;
+  padding:4px 16px; border-radius:12px 12px 0 0; margin-left:18px; opacity:0; transform:translateY(6px); transition:opacity .3s, transform .3s;}
+.speaker.show{opacity:1; transform:translateY(0);}
+.speaker.mateo{background:linear-gradient(135deg,#2f6fb0,#1f4e85); color:#dff0ff;}
+.speaker.lucia{background:linear-gradient(135deg,#e2557f,#b83363); color:#ffe3ee;}
+.speaker.sara{background:linear-gradient(135deg,#caa14e,#9c7a2a); color:#fff6df;}
+
+#textbox{position:relative; background:linear-gradient(180deg, rgba(18,10,22,.82), rgba(18,10,22,.92));
+  border:1px solid rgba(255,255,255,.14); border-radius:18px; padding:1.4rem 1.5rem 2.4rem;
+  box-shadow:0 18px 50px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.08); backdrop-filter:blur(10px); min-height:140px;}
+#textbox.narration{background:linear-gradient(180deg, rgba(14,8,18,.62), rgba(14,8,18,.78)); text-align:center; border-color:rgba(255,255,255,.08);}
+.line-text{font-size:clamp(1.25rem,5vw,1.5rem); line-height:1.62;}
+#textbox.narration .line-text{font-style:italic; opacity:.95;}
+.line-text .em{color:var(--accent); font-style:normal; font-weight:600;}
+.arrow{position:absolute; right:18px; bottom:12px; color:var(--accent); font-size:1.1rem; opacity:0; animation:none;}
+.arrow.show{opacity:.9; animation:bob 1.1s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(4px);}}
+
+/* choices */
+#choices{margin:1rem auto 0; width:min(680px,92vw); display:flex; flex-direction:column; gap:11px;}
+.choice{position:relative; text-align:left; padding:1rem 1.1rem 1rem 3rem; border-radius:14px;
+  background:linear-gradient(135deg, rgba(255,255,255,.09), rgba(255,255,255,.03));
+  border:1px solid color-mix(in srgb,var(--accent) 34%, transparent); color:#fbeef4; cursor:pointer;
+  font-family:'Cormorant Garamond',serif; font-size:clamp(1.1rem,4.4vw,1.3rem); line-height:1.4; overflow:hidden;
+  opacity:0; transform:translateY(16px); transition:opacity .5s ease, transform .5s cubic-bezier(.2,.7,.2,1), background .25s, border-color .25s;}
+.choice.in{opacity:1; transform:translateY(0);}
+.choice::before{content:"❥"; position:absolute; left:1rem; top:50%; transform:translateY(-50%); color:var(--accent); font-size:1.1rem;}
+.choice:hover{background:linear-gradient(135deg, color-mix(in srgb,var(--accent) 22%, transparent), rgba(255,255,255,.05)); border-color:color-mix(in srgb,var(--accent) 65%, transparent);}
+.choice:active{transform:scale(.98);}
+
+/* continue / restart inside stage */
+#endbtns{margin:1.2rem auto 0; width:min(680px,92vw); display:flex; justify-content:center; gap:12px;}
+.end-btn{padding:.8rem 2rem; border-radius:50px; border:none; cursor:pointer; font-family:'Cormorant Garamond',serif;
+  font-weight:600; font-size:1.1rem; letter-spacing:1px; background:linear-gradient(135deg,#ff7a9c,#e23e6b); color:#fff;
+  box-shadow:0 10px 30px rgba(226,62,107,.45); opacity:0; transition:opacity .6s ease;}
+.end-btn.show{opacity:1;}
+.end-btn.ghost{background:transparent; color:var(--accent); border:1px solid color-mix(in srgb,var(--accent) 50%, transparent); box-shadow:none;}
+
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001s !important;}}
+</style>
+</head>
+<body data-theme="night">
+
+<div id="bg"></div>
+<div class="aurora"><span class="a1"></span><span class="a2"></span></div>
+<canvas id="fx"></canvas>
+<div id="grain"></div>
+<div id="vignette"></div>
+<div id="fade"></div>
+
+<!-- top bar -->
+<div id="bar">
+  <span id="chapter"></span>
+  <span class="bar-btns">
+    <button class="icon-btn" id="musicBtn" aria-label="Música">♪</button>
+    <button class="icon-btn" id="menuBtn" aria-label="Reiniciar">⟲</button>
+  </span>
+</div>
+
+<!-- title -->
+<div id="title">
+  <div class="t-eyebrow">una historia interactiva</div>
+  <div class="t-heart">❤</div>
+  <h1 class="t-title">Bajo la<br>misma lluvia</h1>
+  <p class="t-sub">Un encuentro equivocado. Un amor que el destino tardó toda una vida en escribir. Y decisiones que ahora tomarás tú.</p>
+  <div class="t-actions">
+    <button class="t-btn primary" id="startBtn">Comenzar la historia</button>
+    <button class="t-btn ghost" id="continueBtn" style="display:none;">Continuar donde quedé</button>
+  </div>
+  <p class="t-note">toca para avanzar · sube el volumen para la música</p>
+</div>
+
+<!-- stage -->
+<div id="stage">
+  <div id="dialogue">
+    <span class="speaker" id="speaker"></span>
+    <div id="textbox" class="narration">
+      <div class="line-text" id="lineText"></div>
+      <span class="arrow" id="arrow">▼</span>
+    </div>
+  </div>
+  <div id="choices"></div>
+  <div id="endbtns"></div>
+</div>
+
+<script>
+/* ============================================================
+   THE STORY  (Mateo & Lucía → su hija Sara)
+   who: n=narrador, m=Mateo, l=Lucía, s=Sara
+   ============================================================ */
+const S = {
+
+prologo:{ chapter:'Prólogo', theme:'night', fx:'stars', next:'c1_1', lines:[
+  {who:'n', t:'Hay encuentros que parecen accidentes. Pequeños errores del destino.'},
+  {who:'n', t:'Pero a veces, "error" es solo el nombre que le damos al comienzo de todo.'},
+  {who:'n', t:'Esta es la historia de Mateo y Lucía… y de alguien que todavía no había llegado.'},
+]},
+
+/* ---------- CAPÍTULO I · La noche equivocada ---------- */
+c1_1:{ chapter:'Capítulo I · La noche equivocada', theme:'rain', fx:'rain', next:'c1_2', lines:[
+  {who:'n', t:'Once de la noche. La lluvia caía como si el cielo tuviera prisa por contar un secreto.'},
+  {who:'l', t:'(empapada) Por favor, por favor que sea mi carro…'},
+]},
+c1_2:{ chapter:'Capítulo I · La noche equivocada', theme:'rain', fx:'rain',
+  choices:[
+    {t:'Gritar y salir corriendo bajo la lluvia', go:'c1_a'},
+    {t:'Quedarte inmóvil, midiendo el peligro', go:'c1_b'},
+    {t:'Disculparte, muerta de la vergüenza', go:'c1_c'},
+  ], lines:[
+  {who:'n', t:'Lucía abrió la puerta de un auto negro y se lanzó dentro, huyendo del aguacero. Solo al cerrarla entendió su error.'},
+  {who:'m', t:'…¿Disculpa? Creo que este no es tu carro.'},
+  {who:'n', t:'Un desconocido. Un auto ajeno. Y la lluvia encerrándolos a los dos.'},
+]},
+c1_a:{ chapter:'Capítulo I · La noche equivocada', theme:'rain', fx:'rain', next:'c1_d', lines:[
+  {who:'n', t:'Tu instinto te empujó a la puerta. La abriste de golpe y la lluvia volvió a tragarte.'},
+  {who:'m', t:'(asomándose) ¡Espera! ¡Te vas a enfermar! …Al menos llévate el paraguas.'},
+  {who:'n', t:'Algo en su voz no daba miedo. Daba calma. Te detuviste.'},
+]},
+c1_b:{ chapter:'Capítulo I · La noche equivocada', theme:'rain', fx:'rain', next:'c1_d', lines:[
+  {who:'n', t:'No te moviste. Lo miraste a los ojos, buscando una amenaza que no aparecía.'},
+  {who:'m', t:'(media sonrisa) Tranquila. No muerdo. Y, sinceramente, tú me asustaste más a mí.'},
+  {who:'n', t:'Y entonces, sin querer, los dos rieron.'},
+]},
+c1_c:{ chapter:'Capítulo I · La noche equivocada', theme:'rain', fx:'rain', next:'c1_d', lines:[
+  {who:'l', t:'¡Ay, no, perdón! Pensé que… Dios, qué pena, ya me voy—'},
+  {who:'m', t:'Oye, está bien. De verdad. Con esta lluvia, cualquiera se equivoca.'},
+  {who:'n', t:'Su sonrisa desarmó tu vergüenza.'},
+]},
+c1_d:{ chapter:'Capítulo I · La noche equivocada', theme:'rain', fx:'rain',
+  choices:[
+    {t:'Aceptar y subir de nuevo al auto', go:'c1_e'},
+    {t:'Quedarte, pero con la puerta entreabierta', go:'c1_e2'},
+  ], lines:[
+  {who:'m', t:'Está cayendo el diluvio. Quédate hasta que pase. Te prometo que solo soy un tipo con muy mala suerte para que lo confundan con un taxi.'},
+  {who:'n', t:'Lucía dudó. Pero el frío, la lluvia y algo más fuerte que ambos la hicieron quedarse.'},
+]},
+c1_e:{ chapter:'Capítulo I · La noche equivocada', theme:'rain', fx:'rain', next:'c1_f', lines:[
+  {who:'n', t:'Subiste. El motor encendido, la calefacción, la lluvia contra el vidrio. El mundo se volvió pequeño y tibio.'},
+]},
+c1_e2:{ chapter:'Capítulo I · La noche equivocada', theme:'rain', fx:'rain', next:'c1_f', lines:[
+  {who:'n', t:'Te quedaste con un pie en la calle, como quien no quiere comprometerse con el destino. Él lo notó y respetó tu miedo en silencio.'},
+  {who:'n', t:'Poco a poco, la puerta se fue cerrando sola… o quizás la cerraste tú.'},
+]},
+c1_f:{ chapter:'Capítulo I · La noche equivocada', theme:'rain', fx:'rain', next:'c2_1', lines:[
+  {who:'m', t:'Soy Mateo.'},
+  {who:'l', t:'Lucía.'},
+  {who:'m', t:'Lucía… es bonito. Suena a algo que ilumina.'},
+  {who:'n', t:'Hablaron una hora que pasó como un minuto. De la vida, de los miedos, de por qué ambos estaban solos esa noche.'},
+  {who:'n', t:'Cuando la lluvia paró, ninguno de los dos quería que parara.'},
+]},
+
+/* ---------- CAPÍTULO II · Lo que no se dijo ---------- */
+c2_1:{ chapter:'Capítulo II · Lo que no se dijo', theme:'warm', fx:'hearts',
+  choices:[
+    {t:'Preguntarle, ahora mismo, qué oculta', go:'c2_a'},
+    {t:'Callar, por miedo a romper el momento', go:'c2_b'},
+  ], lines:[
+  {who:'n', t:'Las semanas siguientes tuvieron color. Cafés que se enfriaban porque hablar era mejor que beber. Mensajes a medianoche. Risas sin motivo.'},
+  {who:'l', t:'Nunca le conté a nadie tantas cosas tan rápido. Y aun así, sentía que él me escondía algo.'},
+  {who:'m', t:'(pensativo) Hay algo que debería contarte, Lucía. Algo de la noche en que nos conocimos.'},
+]},
+c2_a:{ chapter:'Capítulo II · Lo que no se dijo', theme:'warm', fx:'embers', next:'c2_reveal', lines:[
+  {who:'l', t:'Cuéntame. Lo que sea. Prefiero la verdad incómoda a la duda.'},
+  {who:'n', t:'Mateo respiró hondo, como quien se prepara para abrir una herida vieja.'},
+]},
+c2_b:{ chapter:'Capítulo II · Lo que no se dijo', theme:'warm', fx:'embers', next:'c2_reveal', lines:[
+  {who:'n', t:'Callaste. Sonreíste. Cambiaste de tema. Pero esa noche, la pregunta no te dejó dormir.'},
+  {who:'n', t:'Días después, fue él quien no pudo callar más.'},
+]},
+c2_reveal:{ chapter:'Capítulo II · Lo que no se dijo', theme:'grey', fx:'embers', next:'c2_end', lines:[
+  {who:'m', t:'Hace ocho meses, mi madre estuvo internada. Cáncer. Pasé semanas en ese hospital, viéndola apagarse.'},
+  {who:'m', t:'Y había una enfermera. Le hablaba con dulzura incluso cuando ya nadie escuchaba. Se quedaba un minuto más después de su turno.'},
+  {who:'m', t:'Esa enfermera eras tú, Lucía. Nunca supiste mi nombre. Pero yo no olvidé tu cara.'},
+  {who:'l', t:'(en un susurro) …¿Tú eras el hijo del 304?'},
+  {who:'m', t:'Cuando subiste a mi carro aquella noche, pensé que la vida, por una vez, me devolvía algo.'},
+  {who:'n', t:'No fue un accidente. Fue el destino corrigiendo una despedida.'},
+]},
+c2_end:{ chapter:'Capítulo II · Lo que no se dijo', theme:'warm', fx:'hearts', next:'c3_1', lines:[
+  {who:'n', t:'Esa noche se besaron por primera vez. Y el beso sabía a lluvia, a hospital y a segundas oportunidades.'},
+]},
+
+/* ---------- CAPÍTULO III · La tormenta ---------- */
+c3_1:{ chapter:'Capítulo III · La tormenta', theme:'grey', fx:'rain',
+  choices:[
+    {t:'Entrar y confrontarlo, entre lágrimas', go:'c3_a'},
+    {t:'Marcharte sin decir una palabra', go:'c3_b'},
+    {t:'Respirar y esperar una explicación', go:'c3_c'},
+  ], lines:[
+  {who:'n', t:'Pero ninguna historia verdadera se libra de su tormenta.'},
+  {who:'n', t:'Una tarde, Lucía vio a Mateo en un café, riendo con una mujer hermosa. Sus manos casi se tocaban.'},
+  {who:'l', t:'(el corazón roto) …¿Entonces era esto? ¿Yo era el repuesto de algo?'},
+]},
+c3_a:{ chapter:'Capítulo III · La tormenta', theme:'grey', fx:'rain', next:'c3_truth', lines:[
+  {who:'l', t:'¿Quién es ella, Mateo? ¡Y no me mientas!'},
+  {who:'m', t:'(desconcertado) Lucía… ella es Camila. Mi hermana. Vino a ayudarme con algo que no sabía cómo decirte.'},
+]},
+c3_b:{ chapter:'Capítulo III · La tormenta', theme:'grey', fx:'rain', next:'c3_truth', lines:[
+  {who:'n', t:'Te fuiste. No contestaste sus llamadas en tres días. El silencio pesaba como plomo mojado.'},
+  {who:'n', t:'Al cuarto día, un sobre bajo tu puerta. Su letra. Y una verdad que no esperabas.'},
+]},
+c3_c:{ chapter:'Capítulo III · La tormenta', theme:'grey', fx:'rain', next:'c3_truth', lines:[
+  {who:'n', t:'Esperaste. Y esa noche, él te lo contó todo sin que tuvieras que preguntar.'},
+  {who:'m', t:'La mujer del café es mi hermana, Camila. Me ayudaba a tomar la decisión más difícil de mi vida.'},
+]},
+c3_truth:{ chapter:'Capítulo III · La tormenta', theme:'grey', fx:'rain',
+  choices:[
+    {t:'Pedirle que se quede', go:'c3_stay'},
+    {t:'Dejarlo ir, por amor a su sueño', go:'c3_go'},
+    {t:'Prometer esperarlo, cueste lo que cueste', go:'c3_wait'},
+  ], lines:[
+  {who:'m', t:'Me ofrecieron un trabajo. Al otro lado del mundo. Lo esperé toda mi vida… pero significa irme. Lejos. Por años.'},
+  {who:'m', t:'Y desde que te conozco, ya no sé si quiero ese sueño, o si tú te volviste el único sueño que me importa.'},
+  {who:'n', t:'El amor y el miedo, frente a frente. Y la decisión, ahora, era de los dos.'},
+]},
+c3_stay:{ chapter:'Capítulo III · La tormenta', theme:'grey', fx:'rain', next:'c3_end', lines:[
+  {who:'l', t:'Quédate. Sé que es egoísta. Pero quédate.'},
+  {who:'m', t:'(tomándote el rostro) Lucía… hay sueños que uno cambia con gusto por una sola persona.'},
+  {who:'n', t:'Pero el destino aún tenía páginas que ninguno había leído.'},
+]},
+c3_go:{ chapter:'Capítulo III · La tormenta', theme:'grey', fx:'rain', next:'c3_end', lines:[
+  {who:'l', t:'Ve. Si te pido que te quedes y luego te apagas, jamás me lo perdonaría. Ve… y vuelve.'},
+  {who:'n', t:'El sacrificio más grande del amor: soltar.'},
+]},
+c3_wait:{ chapter:'Capítulo III · La tormenta', theme:'grey', fx:'rain', next:'c3_end', lines:[
+  {who:'l', t:'Entonces te esperaré. Los años que sean. El amor también se mide en paciencia.'},
+  {who:'n', t:'Una promesa frágil y enorme, hecha con la voz temblando.'},
+]},
+c3_end:{ chapter:'Capítulo III · La tormenta', theme:'rain', fx:'rain', next:'c4_1', lines:[
+  {who:'n', t:'Decidieran lo que decidieran, la vida los separó esa primavera. Un aeropuerto. Dos manos soltándose despacio.'},
+  {who:'m', t:'(en tu oído) Pase lo que pase, búscame en cada lluvia. Ahí estaré.'},
+]},
+
+/* ---------- CAPÍTULO IV · El silencio ---------- */
+c4_1:{ chapter:'Capítulo IV · El silencio', theme:'night', fx:'snow',
+  choices:[
+    {t:'Correr a buscarlo entre los heridos', go:'c4_a'},
+    {t:'Quedarte paralizada, temiendo lo peor', go:'c4_b'},
+  ], lines:[
+  {who:'n', t:'Pasaron los meses. Al principio, cartas y llamadas a horas imposibles por la diferencia del reloj.'},
+  {who:'n', t:'Después, las cartas se espaciaron. Y un día… el silencio.'},
+  {who:'l', t:'Tres semanas sin saber de él. El miedo tiene un sonido: el del teléfono que no suena.'},
+  {who:'n', t:'Una noche, en su turno, llegó la noticia de un accidente. Un vuelo. Una lista de heridos. Y en ella, un nombre que Lucía conocía de memoria.'},
+]},
+c4_a:{ chapter:'Capítulo IV · El silencio', theme:'night', fx:'snow', next:'c4_find', lines:[
+  {who:'n', t:'Corriste por los pasillos como nunca. El corazón gritando un solo nombre.'},
+]},
+c4_b:{ chapter:'Capítulo IV · El silencio', theme:'night', fx:'snow', next:'c4_find', lines:[
+  {who:'n', t:'Las piernas no respondían. El mundo se volvió lento y sordo. Una compañera tuvo que sostenerte.'},
+  {who:'n', t:'Pero el amor es más terco que el miedo. Y al fin, corriste.'},
+]},
+c4_find:{ chapter:'Capítulo IV · El silencio', theme:'night', fx:'embers', next:'c5_1', lines:[
+  {who:'n', t:'Una cama, una cortina blanca. Tu mano temblando al abrirla.'},
+  {who:'n', t:'Y ahí estaba. Magullado, vendado, vivo. Más vivo que nunca al verte.'},
+  {who:'m', t:'(sonrisa rota) Te dije… que me buscaras en cada lluvia. No pensé que tendría que estrellarme para volver a verte.'},
+  {who:'l', t:'(llorando y riendo) Eres un idiota. Mi idiota. No te vuelvas a ir.'},
+  {who:'n', t:'El roce con la muerte le enseñó lo que ya sabía: que su lugar en el mundo tenía nombre, y era Lucía.'},
+]},
+
+/* ---------- CAPÍTULO V · El reencuentro ---------- */
+c5_1:{ chapter:'Capítulo V · El reencuentro', theme:'rain', fx:'rain',
+  choices:[
+    {t:'Decir "sí" antes de que termine la pregunta', go:'c5_yes'},
+    {t:'Abrazarlo sin poder hablar', go:'c5_hug'},
+  ], lines:[
+  {who:'n', t:'Cuando lo dieron de alta, llovía otra vez. Por supuesto que llovía.'},
+  {who:'n', t:'En la puerta del hospital, bajo el mismo aguacero del principio, Mateo apoyó una rodilla en el suelo mojado.'},
+  {who:'m', t:'Te conocí por un error. El error más hermoso de mi vida. No quiero corregir nunca más el destino que me trajo a ti.'},
+  {who:'m', t:'Lucía… ¿quieres pasar el resto de tus lluvias conmigo?'},
+]},
+c5_yes:{ chapter:'Capítulo V · El reencuentro', theme:'warm', fx:'hearts', next:'c5_end', lines:[
+  {who:'l', t:'¡Sí! Sí, mil veces sí. Antes, ahora y siempre.'},
+]},
+c5_hug:{ chapter:'Capítulo V · El reencuentro', theme:'warm', fx:'hearts', next:'c5_end', lines:[
+  {who:'n', t:'No te salieron las palabras. Te lanzaste a sus brazos y lo dijiste con el cuerpo, con el llanto, con la lluvia.'},
+  {who:'n', t:'No hizo falta hablar. Él entendió.'},
+]},
+c5_end:{ chapter:'Capítulo V · El reencuentro', theme:'warm', fx:'hearts', next:'c6_1', lines:[
+  {who:'n', t:'Y bajo la lluvia que los vio nacer como historia, se prometieron el para siempre.'},
+]},
+
+/* ---------- CAPÍTULO VI · Para toda la vida ---------- */
+c6_1:{ chapter:'Capítulo VI · Para toda la vida', theme:'gold', fx:'petals', next:'c6_2', lines:[
+  {who:'n', t:'Se casaron un día de sol, porque la vida, generosa, les guardó ese cielo despejado.'},
+  {who:'n', t:'Ella de blanco. Él incapaz de dejar de mirarla. Y, entre los invitados, su madre ausente, presente en cada flor.'},
+  {who:'m', t:'(en los votos) Te encontré cuando te subiste al carro equivocado. Y entendí que estabas, por fin, en el lugar correcto: a mi lado.'},
+]},
+c6_2:{ chapter:'Capítulo VI · Para toda la vida', theme:'dawn', fx:'hearts', next:'c6_3', lines:[
+  {who:'n', t:'Dos años después, una madrugada, el llanto más pequeño y poderoso del mundo llenó la casa.'},
+  {who:'n', t:'Una niña. De ojos enormes y manos diminutas que se aferraron al dedo de su padre como quien firma un para siempre.'},
+  {who:'l', t:'¿Cómo la llamamos?'},
+  {who:'m', t:'Sara. Significa "princesa". Y mírala… no podría ser otra cosa.'},
+  {who:'n', t:'Sara. La página que el destino venía escribiendo desde una noche de lluvia, sin que nadie lo supiera.'},
+]},
+c6_3:{ chapter:'Capítulo VI · Para toda la vida', theme:'dawn', fx:'hearts', next:'c6_end', lines:[
+  {who:'n', t:'Los años pasaron como pasan las cosas buenas: demasiado rápido y, aun así, llenándolo todo.'},
+  {who:'n', t:'Hubo días normales, de esos que Mateo amaba más, porque a su lado hasta lo común brillaba.'},
+  {who:'n', t:'Discutieron, sí. Se equivocaron. Pero aprendieron a <em>hablar con calma antes de sacar conclusiones</em>, a no dar nada por hecho, a escucharse cuando era difícil.'},
+  {who:'n', t:'Y cada noche de lluvia, sin falta, se buscaban. Porque ahí, siempre, estaba el otro.'},
+]},
+c6_end:{ chapter:'Para toda la vida', theme:'dawn', fx:'hearts', end:true, lines:[
+  {who:'n', t:'Envejecieron tomados de la mano, viendo crecer a Sara, amándose con la terquedad de quien ya sabe que encontró su hogar.'},
+  {who:'n', t:'Porque algunas historias no terminan.'},
+  {who:'n', t:'Solo siguen amándose, para toda la vida.'},
+  {who:'n', t:'— Fin —'},
+]},
+
+};
+
+/* ============================================================
+   ENGINE
+   ============================================================ */
+const $=id=>document.getElementById(id);
+const stage=$('stage'), titleEl=$('title'), bar=$('bar');
+const speakerEl=$('speaker'), textbox=$('textbox'), lineText=$('lineText'), arrow=$('arrow');
+const choicesEl=$('choices'), endbtns=$('endbtns'), chapterEl=$('chapter');
+const SAVE_KEY='historia-mateo-lucia';
+
+let state={scene:'prologo', line:0};
+let typing=false, typeTimer=null, fullText='', shown=0, lineDone=false, atEnd=false;
+const names={m:'Mateo', l:'Lucía', s:'Sara'};
+const classFor={m:'mateo', l:'lucia', s:'sara'};
+
+function save(){ try{ localStorage.setItem(SAVE_KEY, JSON.stringify(state)); }catch(e){} }
+function loadSave(){ try{ return JSON.parse(localStorage.getItem(SAVE_KEY)); }catch(e){ return null; } }
+
+function setTheme(t){ document.body.dataset.theme=t; }
+
+function renderScene(id){
+  state.scene=id; state.line=0; atEnd=false;
+  const sc=S[id];
+  setTheme(sc.theme||'night'); setFx(sc.fx||'none');
+  chapterEl.textContent=sc.chapter||'';
+  choicesEl.innerHTML=''; endbtns.innerHTML='';
+  showLine();
+  save();
+}
+
+function showLine(){
+  const sc=S[state.scene];
+  const line=sc.lines[state.line];
+  const isNarr=(line.who==='n');
+  textbox.classList.toggle('narration', isNarr);
+  if(isNarr){ speakerEl.className='speaker'; speakerEl.classList.remove('show'); speakerEl.textContent=''; }
+  else{
+    speakerEl.className='speaker '+classFor[line.who];
+    speakerEl.textContent=names[line.who];
+    requestAnimationFrame(()=>speakerEl.classList.add('show'));
+  }
+  typeLine(line.t);
+}
+
+function typeLine(html){
+  clearInterval(typeTimer);
+  fullText=html; shown=0; typing=true; lineDone=false;
+  arrow.classList.remove('show');
+  lineText.innerHTML='';
+  // type by visible characters but keep <em> tags intact: strip tags for typing, then set full html at end
+  const plain=html.replace(/<[^>]+>/g,'');
+  typeTimer=setInterval(()=>{
+    shown+=1;
+    lineText.textContent=plain.slice(0,shown);
+    if(shown>=plain.length){ clearInterval(typeTimer); finishTyping(); }
+  }, 24);
+}
+function finishTyping(){
+  clearInterval(typeTimer); typing=false; lineDone=true;
+  lineText.innerHTML=fullText; // restore emphasis tags
+  const sc=S[state.scene];
+  const isLast=(state.line>=sc.lines.length-1);
+  if(isLast){ endScene(sc); }
+  else { arrow.classList.add('show'); }
+}
+
+function endScene(sc){
+  atEnd=true;
+  if(sc.choices){ showChoices(sc.choices); }
+  else if(sc.end){ showEndButtons(); }
+  else { arrow.classList.add('show'); } // tap to continue
+}
+
+function showChoices(list){
+  choicesEl.innerHTML='';
+  list.forEach((c,i)=>{
+    const b=document.createElement('button');
+    b.className='choice'; b.textContent=c.t;
+    b.addEventListener('click',e=>{ e.stopPropagation(); go(c.go); });
+    choicesEl.appendChild(b);
+    setTimeout(()=>b.classList.add('in'), 120+i*130);
+  });
+}
+
+function showEndButtons(){
+  endbtns.innerHTML='';
+  const r=document.createElement('button');
+  r.className='end-btn'; r.textContent='Volver a vivirla ❤';
+  r.addEventListener('click',e=>{ e.stopPropagation(); burst(innerWidth/2, innerHeight*0.5, 40); rain(40); localStorage.removeItem(SAVE_KEY); go('prologo'); });
+  endbtns.appendChild(r);
+  setTimeout(()=>r.classList.add('show'),300);
+  burst(innerWidth/2, innerHeight*0.55, 46); rain(50);
+}
+
+/* advance on tap of dialogue */
+function advance(){
+  const sc=S[state.scene];
+  if(typing){ finishTyping(); return; }
+  if(atEnd){
+    if(sc.choices || sc.end) return; // wait for buttons
+    go(sc.next); return;
+  }
+  // not at end → next line
+  state.line++; save();
+  showLine();
+}
+$('dialogue').addEventListener('click', advance);
+
+/* scene change with cinematic fade */
+function go(id){
+  $('fade').classList.add('on');
+  setTimeout(()=>{
+    renderScene(id);
+    $('fade').classList.remove('on');
+  }, 440);
+}
+
+/* ---- start / title ---- */
+function beginStory(fromSave){
+  titleEl.classList.add('gone');
+  bar.classList.add('show');
+  stage.classList.add('show');
+  started=true;
+  startMusic();
+  if(fromSave){ const s=loadSave(); state={scene:s.scene, line:0}; }
+  go(state.scene && fromSave ? state.scene : 'prologo');
+  if(!fromSave){ state={scene:'prologo',line:0}; }
+}
+$('startBtn').addEventListener('click',()=>{ localStorage.removeItem(SAVE_KEY); state={scene:'prologo',line:0}; beginStory(false); });
+$('continueBtn').addEventListener('click',()=>beginStory(true));
+$('menuBtn').addEventListener('click',e=>{ e.stopPropagation(); localStorage.removeItem(SAVE_KEY); go('prologo'); });
+
+window.addEventListener('load',()=>{
+  const s=loadSave();
+  if(s && s.scene && s.scene!=='prologo'){ $('continueBtn').style.display='block'; }
+});
+
+/* ============================================================
+   PARTICLE FX  (rain · stars · petals · hearts · embers · snow)
+   ============================================================ */
+const canvas=$('fx'), ctx=canvas.getContext('2d');
+let W,H,DPR, started=false, fxMode='stars';
+function resize(){ DPR=Math.min(devicePixelRatio||1,2); W=canvas.width=innerWidth*DPR; H=canvas.height=innerHeight*DPR;
+  canvas.style.width=innerWidth+'px'; canvas.style.height=innerHeight+'px'; }
+resize(); addEventListener('resize',resize);
+const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+function rnd(a,b){return a+(b-a)*Math.random();}
+const heartCols=['#ff5d8f','#ff8fab','#ffb3c6','#ffd9e0','#e23e6b'];
+const petalCols=[['#ff9ab5','#ff6f9c'],['#ffc2d1','#ff97b4'],['#ffd9c2','#f3a07c'],['#ffe0e7','#ffb0c4']];
+let P=[];
+
+function setFx(m){
+  fxMode=m; P=P.filter(p=>p.kind==='heart'); // keep flying burst hearts
+  if(m==='stars'){ for(let i=0;i<70;i++) P.push(star()); }
+}
+function star(){return{kind:'star', x:Math.random()*W, y:Math.random()*H*0.85, r:rnd(.6,1.8)*DPR, ph:rnd(0,6.3), sp:rnd(.01,.03)};}
+function rainline(){return{kind:'rain', x:Math.random()*W*1.1-0.05*W, y:-20, len:rnd(12,26)*DPR, vy:rnd(13,20)*DPR, vx:1.6*DPR, alpha:rnd(.25,.6)};}
+function snowf(){return{kind:'snow', x:Math.random()*W, y:-10, r:rnd(1.2,3)*DPR, vy:rnd(.6,1.6)*DPR, ph:rnd(0,6.3), sw:rnd(.01,.025), alpha:rnd(.5,.95)};}
+function petal(x,y){return{kind:'petal', x:(x??Math.random()*innerWidth)*DPR, y:(y??-20)*DPR, s:rnd(1.4,3.2)*DPR, vx:rnd(-.4,.4)*DPR, vy:rnd(.5,1.3)*DPR, rot:rnd(0,6.3), vr:rnd(-.03,.03), ph:rnd(0,6.3), sw:rnd(.005,.02), grad:petalCols[(Math.random()*petalCols.length)|0], alpha:rnd(.7,1)};}
+function ember(){return{kind:'ember', x:Math.random()*W, y:H+10, r:rnd(.8,2.2)*DPR, vy:-rnd(.4,1.2)*DPR, vx:rnd(-.3,.3)*DPR, ph:rnd(0,6.3), fl:rnd(.04,.09), alpha:rnd(.4,.9), col:Math.random()<.5?'#ffb86b':'#ff8a5c'};}
+function flyHeart(x,y){const a=rnd(0,6.3),sp=rnd(2,7)*DPR;return{kind:'heart',x:x*DPR,y:y*DPR,s:rnd(1,2.4)*DPR,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-2*DPR,g:.10*DPR,alpha:1,fade:rnd(.008,.016),rot:rnd(0,6.3),vr:rnd(-.08,.08),col:heartCols[(Math.random()*heartCols.length)|0]};}
+function riseHeart(){const x=Math.random()*W;return{kind:'heart',x:x,y:H+20,s:rnd(.7,1.5)*DPR,vx:rnd(-.3,.3)*DPR,vy:-rnd(.4,.9)*DPR,g:0,alpha:1,fade:.004,rot:rnd(0,6.3),vr:rnd(-.03,.03),col:heartCols[(Math.random()*heartCols.length)|0]};}
+
+function dHeart(x,y,s,col,al,rot){ctx.save();ctx.translate(x,y);ctx.rotate(rot);ctx.scale(s,s);ctx.globalAlpha=Math.max(al,0);ctx.fillStyle=col;ctx.beginPath();ctx.moveTo(0,0);ctx.bezierCurveTo(0,-3,-5,-3,-5,1);ctx.bezierCurveTo(-5,4,0,6,0,9);ctx.bezierCurveTo(0,6,5,4,5,1);ctx.bezierCurveTo(5,-3,0,-3,0,0);ctx.fill();ctx.restore();}
+function dPetal(p){ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.scale(p.s,p.s);ctx.globalAlpha=Math.max(p.alpha,0);const g=ctx.createLinearGradient(0,-7,0,7);g.addColorStop(0,p.grad[0]);g.addColorStop(1,p.grad[1]);ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(0,-7);ctx.bezierCurveTo(6,-5,6,5,0,8);ctx.bezierCurveTo(-6,5,-6,-5,0,-7);ctx.fill();ctx.restore();}
+
+let frame=0;
+function loop(){
+  ctx.clearRect(0,0,W,H); frame++;
+  if(!reduce && started){
+    if(fxMode==='rain'){ if(frame%1===0){P.push(rainline()); P.push(rainline());} }
+    else if(fxMode==='snow'){ if(frame%6===0) P.push(snowf()); }
+    else if(fxMode==='petals'){ if(frame%24===0 && P.length<150) P.push(petal()); }
+    else if(fxMode==='hearts'){ if(frame%26===0) P.push(riseHeart()); }
+    else if(fxMode==='embers'){ if(frame%10===0) P.push(ember()); }
+    else if(fxMode==='stars'){ /* static-ish */ }
+  }
+  for(let i=P.length-1;i>=0;i--){
+    const p=P[i];
+    if(p.kind==='rain'){ p.x+=p.vx; p.y+=p.vy; ctx.strokeStyle='rgba(170,200,235,'+p.alpha+')'; ctx.lineWidth=1.1*DPR; ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x-p.vx*1.2,p.y-p.len); ctx.stroke(); if(p.y>H+20) P.splice(i,1); }
+    else if(p.kind==='star'){ p.ph+=p.sp; const a=.3+.5*(0.5+0.5*Math.sin(p.ph)); ctx.globalAlpha=a; ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.3); ctx.fill(); ctx.globalAlpha=1; }
+    else if(p.kind==='snow'){ p.ph+=p.sw; p.x+=Math.sin(p.ph)*0.6*DPR; p.y+=p.vy; ctx.globalAlpha=p.alpha; ctx.fillStyle='#eaf2ff'; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.3); ctx.fill(); ctx.globalAlpha=1; if(p.y>H+10) P.splice(i,1); }
+    else if(p.kind==='petal'){ p.ph+=p.sw; p.x+=p.vx+Math.sin(p.ph)*0.6*DPR; p.y+=p.vy; p.rot+=p.vr; dPetal(p); if(p.y>H+30) P.splice(i,1); }
+    else if(p.kind==='ember'){ p.ph+=p.fl; p.x+=p.vx; p.y+=p.vy; const a=p.alpha*(0.6+0.4*Math.sin(p.ph)); ctx.globalAlpha=Math.max(a,0); ctx.fillStyle=p.col; ctx.shadowBlur=8*DPR; ctx.shadowColor=p.col; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.3); ctx.fill(); ctx.shadowBlur=0; ctx.globalAlpha=1; if(p.y<-10) P.splice(i,1); }
+    else if(p.kind==='heart'){ if(p.g)p.vy+=p.g; p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr; p.alpha-=p.fade; dHeart(p.x,p.y,p.s,p.col,p.alpha,p.rot); if(p.alpha<=0||p.y<-30||p.y>H+40) P.splice(i,1); }
+  }
+  if(P.length>520) P.splice(0,P.length-520);
+  requestAnimationFrame(loop);
+}
+loop();
+
+function burst(x,y,n){ for(let i=0;i<n;i++) P.push(flyHeart(x,y)); }
+function rain(n){ for(let i=0;i<n;i++){ const p=petal(Math.random()*innerWidth, -rnd(0,innerHeight)); P.push(p);} }
+addEventListener('pointerdown',e=>{ if(started && !e.target.closest('#choices') && !e.target.closest('#endbtns') && !e.target.closest('#bar')) burst(e.clientX,e.clientY,5); });
+
+/* ============================================================
+   AMBIENT MUSIC (generated, no files)
+   ============================================================ */
+let ac=null, musicOn=false, mnodes=null, mtimer=null;
+function buildMusic(){
+  const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return false;
+  ac=new AC();
+  const master=ac.createGain(); master.gain.value=0; master.connect(ac.destination);
+  const delay=ac.createDelay(); delay.delayTime.value=0.36; const fb=ac.createGain(); fb.gain.value=0.34;
+  const wet=ac.createGain(); wet.gain.value=0.5; delay.connect(fb); fb.connect(delay); delay.connect(wet); wet.connect(master);
+  const lp=ac.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=1700; lp.connect(master); lp.connect(delay);
+  mnodes={master,lp};
+  const pad=ac.createGain(); pad.gain.value=0.05; pad.connect(lp);
+  [196.0,233.08,293.66].forEach((f,i)=>{ const o=ac.createOscillator(); o.type='sine'; o.frequency.value=f; const g=ac.createGain(); g.gain.value=0.5/(i+1); o.connect(g); g.connect(pad); o.start();
+    const lfo=ac.createOscillator(); lfo.frequency.value=0.06+i*0.03; const lg=ac.createGain(); lg.gain.value=2.4; lfo.connect(lg); lg.connect(o.frequency); lfo.start(); });
+  const scale=[392.0,440.0,523.25,587.33,659.25,587.33,523.25,440.0]; let step=0;
+  function note(){ const t=ac.currentTime; const f=scale[step%scale.length]; step++; const o=ac.createOscillator(); o.type='triangle'; o.frequency.value=f; const g=ac.createGain(); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(0.075,t+0.06); g.gain.exponentialRampToValueAtTime(0.0008,t+1.5); o.connect(g); g.connect(lp); o.start(t); o.stop(t+1.6); }
+  mtimer=setInterval(note,1750); note();
+  return true;
+}
+function startMusic(){ if(musicOn) return; if(!mnodes){ if(!buildMusic()) return; } if(ac.state==='suspended') ac.resume(); mnodes.master.gain.linearRampToValueAtTime(0.5, ac.currentTime+2.5); musicOn=true; $('musicBtn').classList.add('playing'); $('musicBtn').textContent='♫'; }
+function stopMusic(){ if(!musicOn||!ac) return; mnodes.master.gain.linearRampToValueAtTime(0.0001, ac.currentTime+0.6); musicOn=false; $('musicBtn').classList.remove('playing'); $('musicBtn').textContent='♪'; }
+$('musicBtn').addEventListener('click',e=>{ e.stopPropagation(); musicOn?stopMusic():startMusic(); });
+</script>
+</body>
+</html>
