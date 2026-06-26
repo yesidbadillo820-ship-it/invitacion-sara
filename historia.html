@@ -85,6 +85,15 @@ body[data-theme="dawn"]{--c1:#2a1320;--c2:#67364c;--accent:#ffc2d9;}
 #stage{position:fixed; inset:0; z-index:30; display:none; flex-direction:column; justify-content:flex-end; padding:0 0 4vh;}
 #stage.show{display:flex;}
 
+/* scene illustration panel */
+#artwrap{position:absolute; top:0; left:0; right:0; height:60vh; z-index:1; overflow:hidden; cursor:pointer;
+  -webkit-mask-image:linear-gradient(#000 58%, transparent 99%); mask-image:linear-gradient(#000 58%, transparent 99%);}
+.art-layer{position:absolute; inset:0; opacity:0; transition:opacity 1.1s ease; transform:scale(1.02);}
+.art-layer.show{opacity:1; animation:artbreath 14s ease-in-out infinite;}
+@keyframes artbreath{0%,100%{transform:scale(1.02);}50%{transform:scale(1.08);}}
+.art-layer svg{width:100%; height:100%; display:block;}
+#dialogue,#choices,#endbtns{position:relative; z-index:3;}
+
 #dialogue{margin:0 auto; width:min(680px,92vw); cursor:pointer;}
 .speaker{display:inline-block; font-family:'Playfair Display',serif; font-weight:600; font-size:1rem; letter-spacing:1px;
   padding:4px 16px; border-radius:12px 12px 0 0; margin-left:18px; opacity:0; transform:translateY(6px); transition:opacity .3s, transform .3s;}
@@ -124,6 +133,13 @@ body[data-theme="dawn"]{--c1:#2a1320;--c2:#67364c;--accent:#ffc2d9;}
 .end-btn.show{opacity:1;}
 .end-btn.ghost{background:transparent; color:var(--accent); border:1px solid color-mix(in srgb,var(--accent) 50%, transparent); box-shadow:none;}
 
+/* final dedication */
+#dedication{margin:.6rem auto 1.4rem; width:min(680px,92vw); text-align:center; opacity:0; transform:translateY(10px);
+  transition:opacity 1.4s ease, transform 1.4s ease; position:relative; z-index:3;}
+#dedication.show{opacity:1; transform:translateY(0);}
+#dedication .d1{font-family:'Cormorant Garamond',serif; font-style:italic; font-size:clamp(1.2rem,4.8vw,1.45rem); color:var(--accent); letter-spacing:1px;}
+#dedication .d2{font-family:'Tangerine',cursive; font-size:clamp(2.6rem,11vw,3.6rem); color:#ffd9e0; line-height:1; margin-top:.2rem; text-shadow:0 3px 22px rgba(255,140,180,.5);}
+
 @media (prefers-reduced-motion:reduce){*{animation-duration:.001s !important;}}
 </style>
 </head>
@@ -160,6 +176,7 @@ body[data-theme="dawn"]{--c1:#2a1320;--c2:#67364c;--accent:#ffc2d9;}
 
 <!-- stage -->
 <div id="stage">
+  <div id="artwrap"><div class="art-layer" id="artA"></div><div class="art-layer" id="artB"></div></div>
   <div id="dialogue">
     <span class="speaker" id="speaker"></span>
     <div id="textbox" class="narration">
@@ -168,6 +185,7 @@ body[data-theme="dawn"]{--c1:#2a1320;--c2:#67364c;--accent:#ffc2d9;}
     </div>
   </div>
   <div id="choices"></div>
+  <div id="dedication"></div>
   <div id="endbtns"></div>
 </div>
 
@@ -417,8 +435,10 @@ function renderScene(id){
   state.scene=id; state.line=0; atEnd=false;
   const sc=S[id];
   setTheme(sc.theme||'night'); setFx(sc.fx||'none');
+  if(sceneArt[id]) setArt(sceneArt[id]); else if(!curArt) setArt(themeArt[sc.theme]||'stars');
   chapterEl.textContent=sc.chapter||'';
   choicesEl.innerHTML=''; endbtns.innerHTML='';
+  const dedEl=$('dedication'); if(dedEl){ dedEl.classList.remove('show'); dedEl.innerHTML=''; }
   showLine();
   save();
 }
@@ -478,6 +498,9 @@ function showChoices(list){
 }
 
 function showEndButtons(){
+  const ded=$('dedication');
+  ded.innerHTML='<div class="d1">Para Danni, con todo mi amor</div><div class="d2">— Yesid ❤</div>';
+  setTimeout(()=>ded.classList.add('show'), 700);
   endbtns.innerHTML='';
   const r=document.createElement('button');
   r.className='end-btn'; r.textContent='Volver a vivirla ❤';
@@ -611,6 +634,69 @@ function buildMusic(){
 function startMusic(){ if(musicOn) return; if(!mnodes){ if(!buildMusic()) return; } if(ac.state==='suspended') ac.resume(); mnodes.master.gain.linearRampToValueAtTime(0.5, ac.currentTime+2.5); musicOn=true; $('musicBtn').classList.add('playing'); $('musicBtn').textContent='♫'; }
 function stopMusic(){ if(!musicOn||!ac) return; mnodes.master.gain.linearRampToValueAtTime(0.0001, ac.currentTime+0.6); musicOn=false; $('musicBtn').classList.remove('playing'); $('musicBtn').textContent='♪'; }
 $('musicBtn').addEventListener('click',e=>{ e.stopPropagation(); musicOn?stopMusic():startMusic(); });
+
+/* ============================================================
+   SCENE ILLUSTRATIONS  (inline SVG silhouette art)
+   ============================================================ */
+const artA=$('artA'), artB=$('artB');
+let activeLayer=null, curArt=null;
+function setArt(name){
+  if(!name || name===curArt) return; curArt=name;
+  const gen=ART[name]||ART.stars;
+  const incoming=(activeLayer===artA)?artB:artA;
+  const outgoing=activeLayer;
+  incoming.innerHTML=gen();
+  incoming.style.opacity='0';
+  void incoming.offsetWidth; // force reflow so the fade transitions
+  incoming.classList.add('show');
+  incoming.style.opacity='1';
+  if(outgoing){ outgoing.classList.remove('show'); outgoing.style.opacity='0'; }
+  activeLayer=incoming;
+}
+const sceneArt={ prologo:'stars', c1_1:'car', c2_1:'cafe', c2_reveal:'hospital', c2_end:'kiss',
+  c3_1:'storm', c3_truth:'storm', c3_end:'airport', c4_1:'snow', c4_find:'bed',
+  c5_1:'proposal', c5_end:'kiss', c6_1:'wedding', c6_2:'baby', c6_3:'forever', c6_end:'forever' };
+const themeArt={ night:'stars', rain:'car', warm:'cafe', grey:'storm', gold:'wedding', dawn:'baby' };
+
+function Rr(a,b){return a+(b-a)*Math.random();}
+function svgFrame(inner){return '<svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">'+inner+'</svg>';}
+function bust(cx,hy,s,c){return '<circle cx="'+cx+'" cy="'+hy+'" r="'+(12*s)+'" fill="'+c+'"/><path d="M '+(cx-22*s)+' '+(hy+50*s)+' Q '+(cx-22*s)+' '+(hy+20*s)+' '+cx+' '+(hy+20*s)+' Q '+(cx+22*s)+' '+(hy+20*s)+' '+(cx+22*s)+' '+(hy+50*s)+' Z" fill="'+c+'"/>';}
+function heart(x,y,s,c,o){o=(o==null)?1:o;return '<path transform="translate('+x+','+y+') scale('+s+')" fill="'+c+'" opacity="'+o+'" d="M0 3 C0 -1 -5 -1 -5 2 C-5 5 0 7 0 10 C0 7 5 5 5 2 C5 -1 0 -1 0 3 Z"/>';}
+function rainSVG(n,c){c=c||'rgba(180,205,235,0.5)';let s='';for(let i=0;i<n;i++){const x=Rr(0,400),y=Rr(0,300),l=Rr(8,22);s+='<line x1="'+x+'" y1="'+y+'" x2="'+(x-3)+'" y2="'+(y+l)+'" stroke="'+c+'" stroke-width="1"/>';}return s;}
+function starsSVG(n,c){c=c||'#fff';let s='';for(let i=0;i<n;i++){const x=Rr(0,400),y=Rr(0,185),r=Rr(0.3,1.7);s+='<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+c+'" opacity="'+Rr(0.4,1)+'"/>';}return s;}
+function snowSVG(n){let s='';for(let i=0;i<n;i++){const x=Rr(0,400),y=Rr(0,300),r=Rr(1,2.6);s+='<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="#eaf2ff" opacity="'+Rr(0.4,0.95)+'"/>';}return s;}
+function petalsSVG(n,c){c=c||'#ffc2d1';let s='';for(let i=0;i<n;i++){const x=Rr(0,400),y=Rr(0,300);s+='<ellipse cx="'+x+'" cy="'+y+'" rx="3" ry="5" fill="'+c+'" opacity="'+Rr(0.35,0.8)+'" transform="rotate('+Rr(0,180)+' '+x+' '+y+')"/>';}return s;}
+function city(){const xs=[20,70,120,300,350],hs=[90,130,70,110,80];let s='';for(let i=0;i<xs.length;i++){s+='<rect x="'+xs[i]+'" y="'+(160-hs[i])+'" width="40" height="'+hs[i]+'" fill="#0c1722" opacity="0.85"/>';for(let w=0;w<8;w++){if(Math.random()<0.5)s+='<rect x="'+(xs[i]+6+(w%2)*16)+'" y="'+(160-hs[i]+10+Math.floor(w/2)*14)+'" width="6" height="7" fill="#ffd98a" opacity="0.5"/>';}}return s;}
+
+const ART={
+ stars:()=>svgFrame('<defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d0a22"/><stop offset="1" stop-color="#241749"/></linearGradient></defs><rect width="400" height="300" fill="url(#g1)"/>'+starsSVG(80)+'<circle cx="320" cy="70" r="34" fill="#f3eecf" opacity="0.9"/><circle cx="308" cy="62" r="30" fill="#1a1240" opacity="0.6"/>'+heart(182,236,1.5,'#ff6f9c',0.9)+heart(216,248,1.0,'#ffb3c6',0.8)),
+
+ car:()=>svgFrame('<defs><linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b1626"/><stop offset="1" stop-color="#102a40"/></linearGradient></defs><rect width="400" height="300" fill="url(#g2)"/>'+city()+'<ellipse cx="200" cy="252" rx="230" ry="42" fill="#16344e" opacity="0.5"/><rect x="70" y="150" width="260" height="70" rx="22" fill="#10151c"/><path d="M110 152 Q150 120 200 120 Q250 120 290 152 Z" fill="#161d26"/><path d="M118 150 Q152 126 200 126 Q248 126 282 150 Z" fill="#e8b06a" opacity="0.85"/>'+bust(168,138,0.5,'#241019')+bust(232,138,0.5,'#241019')+'<circle cx="120" cy="222" r="16" fill="#080a0d"/><circle cx="280" cy="222" r="16" fill="#080a0d"/><polygon points="330,180 400,158 400,212 330,200" fill="#fff2c0" opacity="0.16"/>'+rainSVG(64)),
+
+ cafe:()=>svgFrame('<defs><linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a0f16"/><stop offset="1" stop-color="#5a2433"/></linearGradient></defs><rect width="400" height="300" fill="url(#g3)"/><circle cx="200" cy="120" r="130" fill="#ffb36b" opacity="0.12"/><line x1="200" y1="0" x2="200" y2="40" stroke="#3a2018" stroke-width="2"/><path d="M184 40 H216 L208 58 H192 Z" fill="#2a1810"/><circle cx="200" cy="58" r="6" fill="#ffd98a"/><circle cx="200" cy="58" r="18" fill="#ffd98a" opacity="0.22"/><ellipse cx="200" cy="234" rx="96" ry="20" fill="#2a1510"/><rect x="196" y="234" width="8" height="44" fill="#2a1510"/><rect x="168" y="222" width="14" height="11" rx="2" fill="#180a0a"/><rect x="218" y="222" width="14" height="11" rx="2" fill="#180a0a"/>'+bust(140,150,0.8,'#1c0a10')+bust(260,150,0.8,'#1c0a10')+heart(200,150,1.3,'#ff7a9c',0.9)),
+
+ hospital:()=>svgFrame('<defs><linearGradient id="g4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14141c"/><stop offset="1" stop-color="#2c2733"/></linearGradient></defs><rect width="400" height="300" fill="url(#g4)"/><rect x="248" y="40" width="112" height="155" rx="6" fill="#0f121b"/><line x1="304" y1="40" x2="304" y2="195" stroke="#2c2733" stroke-width="3"/><line x1="248" y1="117" x2="360" y2="117" stroke="#2c2733" stroke-width="3"/><circle cx="335" cy="80" r="20" fill="#cfd6e6" opacity="0.7"/><polygon points="248,60 360,60 320,270 150,270" fill="#aab4cc" opacity="0.06"/><rect x="36" y="200" width="158" height="16" rx="6" fill="#20202a"/><rect x="36" y="184" width="40" height="22" rx="6" fill="#262630"/>'+bust(118,150,0.9,'#2a2330')+'<circle cx="118" cy="150" r="24" fill="#caa9bd" opacity="0.12"/>'+heart(118,118,0.85,'#caa9bd',0.7)),
+
+ kiss:()=>svgFrame('<defs><linearGradient id="g5" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#160a1a"/><stop offset="1" stop-color="#3a1430"/></linearGradient></defs><rect width="400" height="300" fill="url(#g5)"/><circle cx="200" cy="120" r="130" fill="#ff6f9c" opacity="0.10"/><path d="M118 122 Q200 58 282 122 Z" fill="#3a1430"/><path d="M118 122 Q200 58 282 122" fill="none" stroke="#ff7a9c" stroke-width="2" opacity="0.6"/><line x1="200" y1="122" x2="200" y2="182" stroke="#2a0f24" stroke-width="2"/>'+bust(178,152,0.9,'#190a14')+bust(222,152,0.9,'#190a14')+heart(200,112,1.7,'#ff6f9c',0.95)+rainSVG(46,'rgba(255,180,205,0.32)')),
+
+ storm:()=>svgFrame('<defs><linearGradient id="g6" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14141c"/><stop offset="1" stop-color="#322a36"/></linearGradient></defs><rect width="400" height="300" fill="url(#g6)"/><polygon points="300,18 290,88 306,88 296,150" fill="#caa9bd" opacity="0.18"/>'+bust(108,160,0.85,'#1a121e')+bust(292,160,0.85,'#1a121e')+bust(332,176,0.6,'#221a26')+heart(190,150,1.2,'#9a6076',0.8)+heart(214,150,1.2,'#9a6076',0.8)+'<line x1="202" y1="138" x2="202" y2="176" stroke="#322a36" stroke-width="5"/>'+rainSVG(58,'rgba(190,170,190,0.4)')),
+
+ airport:()=>svgFrame('<defs><linearGradient id="g7" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a2030"/><stop offset="0.6" stop-color="#3a2a3a"/><stop offset="1" stop-color="#5a3a40"/></linearGradient></defs><rect width="400" height="300" fill="url(#g7)"/><circle cx="320" cy="215" r="52" fill="#ff9e6e" opacity="0.32"/><path d="M232 110 Q160 150 56 172" stroke="#fff" stroke-width="3" fill="none" opacity="0.14"/><g transform="translate(250,92) rotate(-18)"><ellipse cx="0" cy="0" rx="46" ry="9" fill="#0e1018"/><polygon points="-6,-2 14,-26 22,-24 6,-1" fill="#0e1018"/><polygon points="-6,2 14,26 22,24 6,1" fill="#0e1018"/><polygon points="-40,-2 -54,-14 -48,-1" fill="#0e1018"/></g>'+bust(118,182,0.8,'#160c14')+bust(180,182,0.8,'#160c14')+'<rect x="148" y="228" width="20" height="16" rx="2" fill="#160c14"/>'+heart(149,152,1.1,'#ff7a9c',0.55)),
+
+ snow:()=>svgFrame('<defs><linearGradient id="g8" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d1424"/><stop offset="1" stop-color="#222c44"/></linearGradient></defs><rect width="400" height="300" fill="url(#g8)"/><rect x="60" y="40" width="280" height="205" rx="8" fill="none" stroke="#33405e" stroke-width="8"/><line x1="200" y1="40" x2="200" y2="245" stroke="#33405e" stroke-width="6"/><line x1="60" y1="142" x2="340" y2="142" stroke="#33405e" stroke-width="6"/><circle cx="150" cy="95" r="18" fill="#dfe6f4" opacity="0.6"/>'+bust(200,176,0.9,'#0e1320')+'<g transform="translate(300,212)"><rect x="-16" y="-10" width="32" height="22" rx="2" fill="#e9d9c6"/><path d="M-16 -10 L0 4 L16 -10" fill="none" stroke="#b8889a" stroke-width="1.5"/></g>'+snowSVG(48)),
+
+ bed:()=>svgFrame('<defs><linearGradient id="g9" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c1322"/><stop offset="1" stop-color="#3a2030"/></linearGradient></defs><rect width="400" height="300" fill="url(#g9)"/><circle cx="200" cy="130" r="130" fill="#ffae6e" opacity="0.10"/><rect x="60" y="180" width="240" height="50" rx="8" fill="#2a1822"/><rect x="60" y="158" width="42" height="42" rx="8" fill="#34202c"/><circle cx="92" cy="172" r="12" fill="#160a12"/><rect x="100" y="184" width="150" height="22" rx="11" fill="#160a12"/>'+bust(300,150,0.85,'#160a12')+'<path d="M118 252 H150 L158 236 L168 266 L178 246 H212" stroke="#ff7a9c" stroke-width="2.5" fill="none"/>'+heart(330,120,0.9,'#ff7a9c',0.85)),
+
+ proposal:()=>svgFrame('<defs><linearGradient id="g10" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#160a1a"/><stop offset="1" stop-color="#3a1530"/></linearGradient></defs><rect width="400" height="300" fill="url(#g10)"/><circle cx="200" cy="120" r="135" fill="#ff6f9c" opacity="0.10"/>'+bust(150,120,1.0,'#190a14')+bust(255,186,0.75,'#190a14')+'<g transform="translate(205,206)"><circle cx="0" cy="0" r="5" fill="none" stroke="#f3d39a" stroke-width="2"/><polygon points="0,-11 3,-5 -3,-5" fill="#fff" opacity="0.9"/><g stroke="#fff" stroke-width="1" opacity="0.8"><line x1="-11" y1="-13" x2="-6" y2="-8"/><line x1="11" y1="-13" x2="6" y2="-8"/></g></g>'+heart(200,90,1.5,'#ff6f9c',0.95)+rainSVG(46,'rgba(255,180,205,0.3)')),
+
+ wedding:()=>svgFrame('<defs><linearGradient id="g11" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1d0c"/><stop offset="1" stop-color="#6b4a1f"/></linearGradient></defs><rect width="400" height="300" fill="url(#g11)"/><circle cx="200" cy="120" r="145" fill="#ffe6b0" opacity="0.12"/><path d="M90 270 Q90 70 200 70 Q310 70 310 270" fill="none" stroke="#3a2a14" stroke-width="10"/><g>'+[[100,202],[92,138],[122,92],[182,72],[248,80],[300,122],[312,196]].map(p=>'<circle cx="'+p[0]+'" cy="'+p[1]+'" r="7" fill="#e89ab0"/><circle cx="'+(p[0]+6)+'" cy="'+(p[1]+2)+'" r="5" fill="#f3c0cf"/><circle cx="'+(p[0]-5)+'" cy="'+(p[1]+4)+'" r="4" fill="#caa14e"/>').join('')+'</g>'+bust(178,152,0.95,'#241808')+bust(222,152,0.95,'#241808')+'<g transform="translate(200,120)"><circle cx="-7" cy="0" r="9" fill="none" stroke="#f3d39a" stroke-width="3"/><circle cx="7" cy="0" r="9" fill="none" stroke="#f3d39a" stroke-width="3"/></g>'+petalsSVG(26,'#ffd9c2')),
+
+ baby:()=>svgFrame('<defs><linearGradient id="g12" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1320"/><stop offset="1" stop-color="#67364c"/></linearGradient></defs><rect width="400" height="300" fill="url(#g12)"/><circle cx="200" cy="140" r="120" fill="#ffc2d9" opacity="0.16"/>'+bust(165,140,0.95,'#1e0c16')+bust(235,140,0.95,'#1e0c16')+'<circle cx="200" cy="202" r="17" fill="#f3e0d0"/><circle cx="200" cy="197" r="9" fill="#e9c9b6"/>'+heart(200,166,0.8,'#ff8fab',0.9)+starsSVG(28,'#ffe1ec')),
+
+ forever:()=>svgFrame('<defs><linearGradient id="g13" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a1730"/><stop offset="0.6" stop-color="#7a3a4a"/><stop offset="1" stop-color="#c46a4a"/></linearGradient></defs><rect width="400" height="300" fill="url(#g13)"/><circle cx="200" cy="212" r="72" fill="#ffd9a0" opacity="0.45"/><rect x="0" y="252" width="400" height="48" fill="#2a1020" opacity="0.7"/><path d="M64 70 q8 -8 16 0 q8 -8 16 0" stroke="#2a1020" stroke-width="2" fill="none" opacity="0.6"/><path d="M300 92 q6 -6 12 0 q6 -6 12 0" stroke="#2a1020" stroke-width="2" fill="none" opacity="0.5"/>'+bust(132,148,0.95,'#1a0a16')+bust(274,148,0.95,'#1a0a16')+'<path d="M150 196 Q203 214 256 196" stroke="#1a0a16" stroke-width="5" fill="none"/>'+bust(203,210,0.42,'#1a0a16')+heart(203,118,1.2,'#ff8fab',0.85)),
+};
+
+$('artwrap').addEventListener('click', advance);
 </script>
 </body>
 </html>
